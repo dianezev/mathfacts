@@ -1,0 +1,963 @@
+/********************************************************
+0. Comments
+1. Universal Styles
+2. Background/Overlay Styles
+3. Color Styles for Each Operator
+4. Start Screen Styles
+5. Main Menu Styles
+6. Submenu Styles
+7. Math Facts Styles
+8. Timed Test Results Styles & Alerts
+9. Overall Scores Styles
+10. About Scores Styles
+11. Footer Menu Styles
+12. Copyright Styles
+13. Miscellaneous Styles - clear fix, pseudo-elements etc
+********************************************************/
+
+/****************************
+*****************************
+0. Comments
+*****************************
+****************************/
+
+/*TBD:
+ *    Implement media rules for responsiveness
+ *    Browser-specific improvements needed, especially Safari
+ */
+
+
+/****************************
+*****************************
+1. Universal/General Styles
+*****************************
+****************************/
+
+/*-------TAGS--------*/
+
+* {
+    box-sizing: border-box;
+    margin:0;
+    padding:0;
+}
+/* tympanus explains this needed for overlay...*/
+body { 
+    position: relative; 
+    display: none;
+}
+body, html { height: 100%; }
+body, .getStarted input, .btn, .footer, .scores {
+    font-family: 'Short Stack', cursive;
+}
+p { margin:0; }
+/* TBD: Recommended alternative from CSS tricks
+html { box-sizing: border-box; }
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+*/
+
+/****************************
+*****************************
+2. Background/Overlay Styles
+*****************************
+****************************/
+
+/*-------CLASSES--------*/
+.animBubbles { z-index: 25; }
+.backdrop {
+    background: -webkit-linear-gradient(top,#5a646f,#23272a);
+	background: -moz-linear-gradient(top,#5a646f,#23272a);
+	background: -ms-linear-gradient(top,#5a646f,#23272a);
+	background: -o-linear-gradient(top,#5a646f,#23272a);
+    background-size: 100%;
+    box-shadow: 0 0 25px black;    
+    position:relative;
+}
+.backdrop, .footer, .getStarted {
+    margin: auto;
+    max-width: 700px;
+    min-width: 550px;    
+    width: 80%;
+}
+.backgroundImg {
+    background-clip: border-box;
+    background-image: url(../images/background.png);
+    background-repeat: repeat; 
+    left: 0px; 
+    min-height: 100%; 
+    min-width: 100%; 
+    position: absolute; 
+    top: 0px; 
+}
+/*For printing, override overflow to VISIBLE to get multiple pages to print*/
+/*TBD: clean up padding when media rules implemented*/
+.backgroundShade {
+    background-color: rgba(82, 80, 80, 0.5);
+    height: 100%;
+    left: 0;
+    overflow: auto;
+    padding-bottom: 2em;
+    padding-left: 2em;
+    padding-right: 2em;
+    padding-top: calc((100vh - 570px) / 2.5);
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+/*Used when displaying error for LAST problem on screen*/
+.bringToFront { z-index: 10 !important; }
+/*Used when displaying results for a timed test*/
+.coverAll {
+    background-color: rgba(0,0,0,0.7);
+    z-index: 15 !important;
+}
+.overlay {
+    background-color: rgba(0,0,0,0.6);
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: -10;
+}
+.track {
+    top: .2em;
+    color: lightgray;
+    position:fixed;
+    left: 1em;
+}
+.track p { display: inline-block; }
+.track p:last-child {
+    text-align: left;
+    width: 3em;
+}
+
+/********************************
+*********************************
+3. Color Styles for Each Operator
+*********************************
+********************************/
+
+/*--------CLASSES--------*/
+/*----ADDITION----*/
+.addDef a { color: #428ed9; }
+.addDef a:hover > p, .addColor a p { text-shadow: 0px 8px 8px #428ed9; }
+.addDef a:hover > p, .addColor a p, .addColor, .addColor input {
+    color:#4ba2f8;
+}
+.addDef a:hover > p, .addColor a p, .addColor, .addColor input, .menu li.addColor, .menu li.addDef:hover {
+    border-color: #4ba2f8;
+}
+.page.addColor li:hover, .page.addColor li.active {
+    background-color:#4ba2f8;
+}
+
+/*----SUBTRACTION----*/
+.subtractDef a { color:#d51b4d }
+.subtractDef a:hover > p, .subtractColor a p { text-shadow: 0px 8px 8px #d51b4d; }
+.subtractDef a:hover > p, .subtractColor a p, .subtractColor, .subtractColor input {
+    color:#e03462;
+}
+.subtractDef a:hover > p, .subtractColor a p, .subtractColor, .subtractColor input, .menu li.subtractColor, .menu li.subtractDef:hover {
+    border-color: #e03462;
+}
+.page.subtractColor li:hover, .page.subtractColor li.active {
+    background-color:#e03462;
+}
+
+/*----MULTIPLICATION----*/
+.multiplyDef a { color:#019a68; }
+.multiplyDef a:hover > p, .multiplyColor a p { text-shadow: 0px 8px 8px #019a68; }
+.multiplyDef a:hover > p, .multiplyColor a p, .multiplyColor, .multiplyColor input {
+    color:#00be7d;
+}
+.multiplyDef a:hover > p, .multiplyColor a p, .multiplyColor, .multiplyColor input, .menu li.multiplyColor, .menu li.multiplyDef:hover {
+    border-color: #00be7d;
+}
+.page.multiplyColor li:hover, .page.multiplyColor li.active {
+    background-color:#00be7d;
+}
+
+/*----DIVISION----*/
+.divideDef a { color:#9527bc; }
+.divideDef a:hover > p, .divideColor a p { text-shadow: 0px 8px 8px #9527bc; }
+.divideDef a:hover > p, .divideColor a p, .divideColor, .divideColor input {
+    color:#aa36d3;
+}
+.divideDef a:hover > p, .divideColor a p, .divideColor, .divideColor input, .menu li.divideColor, .menu li.divideDef:hover {
+    border-color: #aa36d3;
+}
+.page.divideColor li:hover, .page.divideColor li.active {
+    background-color:#aa36d3;
+}
+
+/****************************
+*****************************
+4. Start Screen Styles
+*****************************
+****************************/
+
+/*-------CLASSES--------*/
+.getStarted {
+    color: white;
+    height: auto;
+}
+.getStarted h1 {
+    color: #535353;
+    font-size: 45%;
+    font-weight:800;
+    text-align: center;
+    text-shadow: 0px 3px 3px rgba(1, 2, 11, 0.8);
+}
+.rotateThisFadeOut {
+    -webkit-animation: shadeInOut 3s 1, roll .25s 4;
+    -moz-animation: shadeInOut 3s 1, roll .25s 4;
+    -o-animation: shadeInOut 3s 1, roll .25s 4;
+    animation: shadeInOut 3s 1, roll .25s 4;
+}
+.slideFromRightFadeOut {
+    -webkit-animation: shadeInOut 1.0s 1, slipFromRight .7s 1;
+    -moz-animation: shadeInOut 1.0s 1, slipFromRight .7s 1;
+    -o-animation: shadeInOut 1.0s 1, slipFromRight .7s 1;
+    animation: shadeInOut 1.0s 1, slipFromRight .7s 1;
+}
+/*
+.slideInFromLeft {
+    -webkit-animation: shadeIn 2s 1, slipFromLeft 1s 1;
+    -moz-animation: shadeIn 2s 1, slipFromLeft 1s 1;
+    -o-animation: shadeIn 2s 1, slipFromLeft 1s 1;
+    animation: shadeIn 2s 1, slipFromLeft 1s 1;
+}
+.slideInFromRight {
+    -webkit-animation: shadeIn 2s 1, slipFromRight 1s 1;
+    -moz-animation: shadeIn 2s 1, slipFromRight 1s 1;
+    -o-animation: shadeIn 2s 1, slipFromRight 1s 1;
+    animation: shadeIn 2s 1, slipFromRight 1s 1;
+}
+*/
+.startOptions {
+    -webkit-animation: shadeIn 2s 1;
+    -moz-animation: shadeIn 2s 1;
+    -o-animation: shadeIn 2s 1;
+    animation: shadeIn 2s 1;
+}
+.start1 {
+    font-size: 1000%;
+    line-height: 1;
+}
+.start1 p {
+    color: white;
+    line-height: 15vh;
+    opacity: 0;
+    padding: 2vh;
+}
+.start1 p:nth-child(2n+1) {
+    float: left;
+    font-size: 160%;
+    text-align: center;
+    vertical-align: center;
+    width: 30%;
+}
+.start1 p:nth-child(2n+0) {
+    float: right;
+    font-size: 70%;
+    text-align: left;
+    width: 70%;
+}
+.start2 { font-size: 200%; }
+.start2 button {
+    background-color:rgba(172, 170, 170, 0.6);
+    border: 3px outset;
+    box-shadow: 2px 2px 12px #606163;    
+    float: left;
+    height: 35vh;
+    margin-top: 3px;
+    max-height: 225px;
+    text-shadow: 0px 3px 3px rgba(62, 62, 62, 0.8);
+    width: 32%;
+}
+.start2 button { font-size: 150%; }
+.start2 button:focus, .start2 button:hover { border: 5px outset; }
+.start2 button:hover {
+    -webkit-animation: tinyRoll .25s 2;
+    -moz-animation: tinyRoll .25s 2;
+    -o-animation: tinyRoll .25s 2;
+    animation: tinyRoll .25s 2;
+}
+.start2 button:nth-of-type(1) {
+    background-color: rgba(97, 249, 255, 0.35);
+    border-color: rgba(97, 249, 255, 1);
+}
+.start2 button:nth-of-type(1):hover { background-color: rgba(97, 249, 255, 0.5); }
+.start2 button:nth-of-type(2) {
+    background-color: rgba(60, 245, 138, 0.35);
+    border-color: rgba(60, 245, 138, 1);
+    margin-left: 2%;
+}
+.start2 button:nth-of-type(2):hover { background-color: rgba(60, 245, 138, 0.5); }
+.start2 button:nth-of-type(3) {
+    background-color: rgba(100, 144, 255, 0.35);
+    border-color: rgba(100, 144, 255, 1);
+    margin-left: 2%;
+}
+.start2 button:nth-of-type(3):hover { background-color: rgba(100, 144, 255, 0.5); }
+.start2 h3 {
+    margin: 1em auto 0 auto;
+    width: 100%;
+}
+.start2 h3, .start2 input { float: left; }
+.start2 input {
+    background-color: transparent;    
+    border-width: 3px;
+    border-color: rgba(227, 227, 227, 0.3);
+    color: white;
+    font-size: 150%;
+    line-height: 1.5;
+    margin-top: 3px;
+    padding: .3em;
+    text-shadow: 0px 3px 3px rgba(62, 62, 62, 0.8);
+    width: 100%;
+}
+.start2 input:focus {
+    background-color:rgba(255, 255, 255, 0.2);
+    border-color: rgba(227, 227, 227, .8);
+}
+.start2 input:hover {
+    background-color:rgba(255, 255, 255, 0.2);
+}
+
+/****************************
+*****************************
+5. Main Menu Styles
+*****************************
+****************************/
+
+/*-------TAGS--------*/
+nav > ul > li {
+    display: inline-block;
+    font-weight: bold;
+}
+ul {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+}
+
+/*-------CLASSES--------*/
+.menu {
+    background-color: #5a646f;
+    font-size: 150px;
+    left: 0;
+    line-height: 70%;
+    position: relative;
+    text-shadow: 0px 8px 7px #001135;
+    top: 0;
+    width: 100%;
+    z-index: 2;
+}
+.menu a{
+    display:block;
+    margin: 0;
+    padding:0;
+    text-decoration: none;
+}
+.menu li {
+    border: 2px dotted transparent;
+    float: left;
+    position: relative;
+    text-align: center;
+    width: 25%;
+}
+.menu li:hover p {
+    -webkit-animation: roll .25s 2;
+    -moz-animation: roll .25s 2;
+    -o-animation: roll .25s 2;
+    animation: roll .25s 2;
+}
+.menu p {
+    margin: 0;
+    overflow: hidden;    
+    padding-bottom: .06em;
+}
+
+/****************************
+*****************************
+6. Submenu Styles
+*****************************
+****************************/
+
+/*-------TAGS--------*/
+li li {
+    position: relative;
+    font-size: 15px;
+    width: 100%;
+    text-align: center;
+    border:solid #8d908f;
+    border-width: 3px 0 0 0;
+    text-shadow: none;
+}
+nav li:hover > ul {
+    opacity: 1;
+    top: 107px;    
+    height: auto;
+    overflow: visible;
+}
+nav li li { padding: 5px 0; }
+
+/*-------CLASSES--------*/
+.currentLevel { color: white; }
+.submenu {
+    border:none;
+    border-width: 3px 0 0 0;
+    display:table-row;
+    font-size: 20px;
+    margin-top: 5%;
+    padding: 0;
+    position: relative;
+    text-align: left;
+	text-shadow: 0px 1px 1px rgba(1, 2, 11, 0.8);
+    width: 100%;
+}
+.submenu li {
+    display: table-cell;
+    padding: .1em 0;
+    position: relative;
+    text-align: center;
+    vertical-align: middle;
+    z-index: 2;
+}
+.submenu li a { text-decoration: none; }
+.submenu li.active { border: 1px dotted white; }
+.submenu li.active a, .submenu li:hover a { color: white; }
+.submenu li:hover {
+    -webkit-animation: roll .25s 2;
+    -moz-animation: roll .25s 2;
+    -o-animation: roll .25s 2;
+    animation: roll .25s 2;
+}
+
+/****************************
+*****************************
+7. Math Facts Styles
+*****************************
+****************************/
+
+/*-------TAGS--------*/
+input {
+    width: 180px;
+    font-size: 25px;
+}
+
+/*-----CLASSES------*/
+.answerBox { border-color: #c7c6c6; }
+.answerBox.error {
+    border-color: #f8f88a;
+    border-style: dashed;
+    color: #f8f88a;
+}
+.answer_region {
+    float: left;    
+    margin-bottom: .4em;
+    position: relative;
+}
+.answer_region, .problem {
+    margin-left: 2%;
+    margin-right:2%;
+    width: 16%;
+}
+.answer_region i {
+    font-size: 36px;
+    left: 0;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+}
+/*used to force the LAST problem above overlay (to highlight error)*/
+.answer_region:last-child input {
+    position: relative;
+    z-index: 11;
+}
+.answer_region input {
+    background-color: transparent;
+    border: none;
+    font-size: inherit;
+    padding: 0 8px 0 0;
+    text-align: right;
+    width: 100%;
+}
+.answer_region input.live {
+    border: 3px solid;
+    box-shadow: 0px 3px 3px rgba(1, 2, 11, 0.8);
+    -webkit-box-shadow: 0px 3px 3px rgba(1, 2, 11, 0.8);
+    -moz-box-shadow: 0px 3px 3px rgba(1, 2, 11, 0.8);
+    padding-right: 5px;
+}
+.bottom_el { width: 80%; }
+.bottom_el, .operator { border-bottom: 2px solid; }
+.bottom_el, .operator, .top_el {text-align: right; }
+.bottom_el, .top_el {
+    float: right;
+    height: auto;
+    padding-right: 6px;
+}
+.btn {
+    background: transparent;
+/*    border: white 1px dotted;*/
+    border-radius: 0px;
+    color: #ffffff;
+    font-size: 20px;
+	text-shadow: 0px 1px 1px rgba(1, 2, 11, 0.8);
+}
+.btn:hover, .btn:focus {
+    background: #309ddd;
+    background-image: -webkit-linear-gradient(top, #309ddd, #79c9f7);
+    background-image: -moz-linear-gradient(top, #309ddd, #79c9f7);
+    background-image: -ms-linear-gradient(top, #309ddd, #79c9f7);
+    background-image: -o-linear-gradient(top, #309ddd, #79c9f7);
+    background-image: linear-gradient(to bottom, #309ddd, #79c9f7);
+    color: white;
+}
+.chalk { color: rgba(255, 255, 255, .7); }
+.chalk a { color: darkgrey; }
+.chalk a:hover { color: rgba(255, 255, 255, .8); }
+.fadeInOutOnce {
+    -webkit-animation: steadyInOut 1s 1;
+    -moz-animation: steadyInOut 1s 1;
+    -o-animation: steadyInOut 1s 1;
+    animation: steadyInOut 1s 1;
+}
+.hide { display: none; }
+.invisible { visibility: hidden; }
+.letterpress, .letterpress input, .activeFooter {
+	text-shadow: 0px 3px 3px rgba(1, 2, 11, 0.8);
+}
+.numberButtons { padding: 0 1px 0 1px; }
+.numberButtons .btn-group .btn {
+    border-top: dotted 1px white;
+    border-right: dotted 1px white;
+    border-bottom: none;
+    border-left: none;
+}
+.numberButtons .btn-group:first-child {
+    border-left: dotted 1px white;
+}
+.numberButtons:last-child {
+    border-bottom: dotted 1px white;
+}
+.operator {
+    float: left;
+    padding-left: 15%;
+    width: 20%;
+}
+.page {
+    min-height: 100%;
+    padding: 0 0 1.2em 0;
+}
+.page nav {
+    border-top: 1px solid lightgray;
+    display: table;
+    font-size: 25px;
+    height: 25px;
+    padding-left: 0;
+    width: 100%;
+}
+.problem {
+    float: left;
+    margin-bottom: .04em;
+}
+/*used to force the LAST problem above overlay (to highlight error)*/
+.problem:last-child p {
+    position: relative;
+    z-index: 11;
+}
+.timeHeader h2 {
+    font-size: 32px;
+    font-weight: 600;
+    height: 105%;   /* TBD: better way to make it cover main & sub menu for all browsers? */
+    margin: auto auto;   /* TBD: how better to center vertically, or at least use responsive measurement?*/
+    text-align: center;
+    width: 60%;
+}
+.timeHeader h2 p {
+    height: 50%;
+    width: 100%;
+    padding-top: 5%;
+    text-align: center; 
+}
+.timeHeader, .timeHeader i { color: rgba(167, 185, 198, 1); }
+.timeHeader {
+    background-color: rgba(90, 100, 111, 1);
+    border: 1px dotted white;
+    height: 28%;
+    left: 0;
+    position: absolute;
+    text-shadow: 0px 3px 3px rgba(1, 2, 11, 0.8);
+    top: 0;
+    width: 100%;
+    z-index: 3;
+}
+/* TBD: how to make timer icon centered vertically & responsive? */
+.timerOn {
+    height: 100%;
+    text-align: center;
+    width: 20%;
+}
+.timerOn:first-of-type { float: left; }
+.timerOn i {
+    font-size: 600%;
+    margin: 20% 20%;
+}
+.top_el {
+    margin-bottom: -10%;
+    width: 100%;
+}
+.whiteboard {
+    font-size: 3em;
+    line-height: normal;
+    margin: 0.2em auto auto auto;
+    width: 100%;
+}
+.whiteboard p, input {
+    font-family: 'Open Sans Light', 'Open Sans', monospace;
+    font-weight: 600;
+}
+
+/****************************
+*****************************
+8. Timed Test Results Styles
+*****************************
+****************************/
+
+/*-------CLASSES--------*/
+.blob {
+    border-radius: 100%;
+    opacity: .8;
+    position: fixed;
+    z-index: 16;
+}
+.countdown h1 { font-size: 1000%; }
+.countdown h2, .confirm h2 { font-size: 200%; }
+.errorTable { height: 35vh; }
+.errorTable tbody, .errorTable thead { width: 100%; }
+.errorTable thead { height: 10%; }
+.errorTable td { font-size: 90%; }
+.errorTable tbody {
+    border: 1px solid white;
+    float: left;
+    height: 100%;
+    overflow: auto;
+    padding-right: 18px;
+}
+.fadeInAndOut {
+    -webkit-animation: steadyInOut 10s 30;
+    -moz-animation: steadyInOut 10s 30;
+    -o-animation: steadyInOut 10s 30;
+    animation: steadyInOut 10s 30;
+}
+.test, .confirm, .countdown {
+    background-color: #23272a;
+    border: 1px solid lightgray;
+    font-weight: 400;
+    left: 50%;
+    margin: auto;
+    max-height: 90%;
+    padding: 1em;
+    position:absolute;
+    text-align: center;
+    top: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    -moz-transform: translateX(-50%) translateY(-50%);
+    -ms-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    z-index: 17;
+}
+.test, .confirm, .scores, .countdown { color:rgba(255, 255, 255, .8); }
+.test button, .confirm button {
+    background-color:#cacaca;
+    color: #5f5f5f;
+    display: inline-block;
+    font-size: 150%;
+    margin: 1em .2em;
+    padding: .4em 1em;
+}
+.test button:hover, .confirm button:hover { color: #171717; }
+.test button:focus, .confirm button:focus { border: 2px solid white; }
+.test h3, .test h2 {
+    font-size: 150%;
+    font-weight: 800;
+    text-align: center;
+}
+.test h2 { color:deeppink; }
+.test h4, .confirm h4 {
+    font-size: 20px;
+    text-align: center;
+}
+.test h3 { padding-top: 1em; }
+.test span { color: #6ad7fa; }
+.test h4:first-of-type, .confirm h2 { margin-top: 35px; }
+.vertScroll { overflow:hidden; }
+.wobble {
+    -webkit-animation: tinyRoll 1s 150;
+    -moz-animation: tinyRoll 1s 150;
+    -o-animation: tinyRoll 1s 150;
+    animation: tinyRoll 1s 150;
+}
+
+/****************************
+*****************************
+9. Overall Scores Styles
+*****************************
+****************************/
+
+/*-------TAGS--------*/
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+tbody:first-child, thead + tbody { border-top: 4px double; }
+td {
+    padding: 0.1rem .7rem;
+    text-align: left;
+    vertical-align: top;
+    white-space: nowrap;
+}
+td span {
+    color: white;
+    font-style: italic;
+    font-weight:bolder;
+    text-align: left;
+}
+th {
+    font-size: 125%;
+    font-weight: bold;
+    text-align: center;
+}
+thead { padding: 1px; }
+tr.newLevel { border-top: 1px solid white; }
+tr.newLevel, tbody.addColor, tbody.subtractColor, tbody.multiplyColor, tbody.divideColor {
+    border-color: lightgray;
+}
+
+/*-------CLASSES--------*/
+.forceScroll {
+    border: 1px solid darkgray;
+    height: 36vh;
+    overflow-y: auto;
+}
+.scores {
+    border-top: 1px solid lightgray;
+    font-size: 15px;
+    font-weight: 300;
+    height: 90%;
+    padding: 2em 15px 1em 15px;
+    position: relative;
+}
+.scores a {
+    color: lightgray;
+    float: right;
+    margin: auto .5em;
+}
+.scores a:hover { color: white; }
+.scores h3 {
+    margin-bottom: .5em;
+    margin-top: .3em;
+    text-align: left;
+}
+.scores h4 { margin-top: .2em; }
+.scores td:nth-child(1) { 
+    font-size: 125%;
+    font-weight: bold;
+    text-align: left;
+    width: 32%;
+}
+.scores td:nth-child(2) { 
+    text-align: right;
+    width: 16%;
+}
+.scores td:nth-child(3) { width: 23%; text-align: left;}
+.scores td:nth-child(4) { width: 29%; text-align: center;}
+
+/****************************
+*****************************
+10. About Styles
+*****************************
+****************************/
+
+/*-------CLASSES--------*/
+.about {
+    border-top: 1px solid lightgray;
+    color:rgba(255, 255, 255, .8);
+    font-size: 16px;
+    font-weight: 200;
+    position:relative;
+}
+.about a:focus, .about a:hover {
+    color: lightblue;
+}
+.about div {
+    border: 1px solid lightgray;
+    height: 57vh;
+    margin: 1em;
+    overflow-y: auto;
+    padding: 1em 15px 1em 15px;
+}
+.about h3 { 
+    color: rgb(155, 172, 190);
+    font-style: italic;
+    font-size: 130%;
+    font-weight: 500;
+    text-decoration: underline;
+}
+.about li {
+    float: left;
+    list-style: none;
+    position: relative;
+    text-align: left;
+    width: 80%;
+}
+.about p {
+    font-size: 14px;
+}
+/*    TBD: dropping this causes problem with footer I don't understand*/
+.about ol { height: 150px; }
+.about span {
+    color: #54ccf8;
+}
+.smallFont { font-size: 15px; }
+
+/****************************
+*****************************
+11. Footer Menu Styles
+*****************************
+****************************/
+
+/*-------CLASSES--------*/
+.activeFooter a { color: white !important; }
+.footer {
+    background-color: transparent;
+    bottom: 0;
+    color: white;
+    left: 0;
+    position: relative;
+}
+.footer, .credit {
+    font-size: 12px;
+    text-align:center;
+    width: 100%;   
+}
+.footer .activeFooter {
+    background-color: #494B4E !important;
+    border-color: white;
+}
+.footer a {
+    align-items: center;
+    display: flex;
+    font-size: 16px;
+    height: 100%;
+    justify-content: center;
+    margin: auto;
+    text-decoration: none;
+    width: 100%;
+}
+.footer i { 
+    align-items: center;
+    display: flex;
+    font-size: 170%; 
+    height: 100%;
+}
+.footer li {
+    color: lightgray;
+    border: dotted 1px transparent;
+}
+.footer li:hover { background-color: #494B4E; }
+.footer li:hover i, .closeDiv:hover i, .scores a:hover i {
+    -webkit-animation: roll .25s 2;
+    -moz-animation: roll .25s 2;
+    -o-animation: roll .25s 2;
+    animation: roll .25s 2;
+}
+.footer nav ul {
+    display:inline-block;
+    width: 100%;
+}
+.footer nav ul li {
+    float: left;
+    font-size: 200%;
+    height: 9vh;
+    width: 25%;
+}
+.footer nav { height: 9vh; }
+.footer ul { line-height: 2; }
+
+/****************************
+*****************************
+12. Copyright Styles
+*****************************
+****************************/
+
+/*-------TAGS--------*/
+small { font-size: 100%; }
+
+/*-------CLASSES--------*/
+.autoCenter {
+    display:block;
+    margin-top: 4px;
+    text-align:center;
+    width: auto;
+}
+.credit { color: white; }
+
+/****************************************
+*****************************************
+13. Miscellaneous Styles - clear fix, etc
+*****************************************
+****************************************/
+
+/*MICRO-CLEARFIX by Nicolas Gallagher http://nicolasgallagher.com/micro-clearfix-hack/*/
+.cf:before, .cf:after {
+    content:"";
+    display:table;
+}
+.cf:after { clear:both; }
+
+/* For IE 6/7 (trigger hasLayout) */
+.cf { zoom:1; }
+
+/*from CSS Tricks - to change color of selected text */
+::selection { background: #869fae; /* WebKit/Blink Browsers */ }
+::-moz-selection { background: #869fae; /* Gecko Browsers */ }
+
+/* from CSS Tricks - to change color of placeholder text */
+::-webkit-input-placeholder { color: #d4dae2; }
+:-moz-placeholder { color: #d4dae2; }
+::-moz-placeholder { color: #d4dae2; }
+:-ms-input-placeholder { color: #d4dae2; }
+
+/*Adapted from Mark Senff's example http://codepen.io/senff/pen/fqmFo*/
+.closeDiv {
+	background: #de0000;
+	-webkit-border-radius: 5%;
+	-moz-border-radius: 5%;
+	-ms-border-radius: 5%;
+	-o-border-radius: 5%;
+	border-radius: 5%;
+	-webkit-box-shadow: inset 3px 3px 2px rgba(255,255,255,0.8), inset -3px -3px 2px rgba(0, 0, 0, 0.3);
+	-moz-box-shadow: inset 3px 3px 2px rgba(255,255,255,0.8), inset -3px -3px 2px rgba(0, 0, 0, 0.3);
+	box-shadow: inset 3px 3px 2px rgba(255,255,255,0.8), inset -3px -3px 2px rgba(0, 0, 0, 0.3);
+	color: #FFFFFF;
+	cursor: pointer;
+	font-size: 30px;
+	font-weight: normal;
+	height: 33px;
+	line-height: 30px;
+	position: absolute;
+	right: 1px;
+	text-align: center;
+	top: 1px;
+	-webkit-transition: color 0.2s ease-in-out;
+	-moz-transition: color 0.2s ease-in-out;
+	-o-transition: color 0.2s ease-in-out;
+	transition: color 0.2s ease-in-out;
+	width: 40px;
+}

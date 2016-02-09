@@ -1,0 +1,484 @@
+<!doctype html>
+<!--
+    
+    fastermathfacts.org by Diane Zevenbergen, dianezev@comcast.net
+    
+    THIS IS A WORK IN PROGRESS. STILL TO BE DONE:
+    1. Implement templates and/or PHP to streamline index.html.
+    2. Additional work to make app responsive for various media.
+    3. Browser specific improvements, particularly Safari.
+    4. Add'l notes on planned improvements in script.js.
+    
+    This app is designed to help students practice addition, subtraction,
+    multiplication and division at a wide variety of levels.
+
+-->
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Short+Stack' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" href="master.css">
+    <title>Math Facts: Gain fluency in addition, subtraction, multiplication and division</title>
+    <meta name="description=" content="Faster Math Facts is a free online tool that helps students develop fluency in addition, subtraction, multiplication and division. Practice sessions and one-minute timed tests provide instant feedback to students at a variety of levels. A print/save feature makes it easy for teachers and parents to track a student's progress.">
+</head>
+<body>
+
+<!-- overlay brought to front with z-index when needed -->
+<div class="overlay" id="cover"></div>
+    
+<!-- animated bubbles brought to front with z-index when user finishes test -->
+<div id="bubbleContainer" class="animBubbles"></div>
+
+<!-- This div hidden except when results are displayed for a timed test-->
+<div class="test cf hide" id="topicTestResults">
+    <div class="closeDiv" title="Close"><i id="closeTestResults" class="fa fa-times"></i></div>
+    <h4 id="test_user">(your name)</h4>
+    <h4 id="test_time">(time length)</h4>
+    <h4 id="test_level">(level)</h4>
+    <h3 id="test_correct">(correct)</h3>
+    <br>
+    <h2 id="test_moveUp">(Nice work...)</h2>
+    <div class="vertScroll cf">
+        <table class="errorTable">
+            <thead>
+                <tr>
+                    <th colspan="2">Errors</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- HTML Validator did not like header above without td -->
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- This div hidden except when user interrupts a timed test-->
+<div class="confirm cf hide" id="topicConfirm">
+    <div class="closeDiv" title="Close"><i id="closeConfirm" class="fa fa-times"></i></div>
+    <h2 id="confirmMsg">Are you sure you want to stop the timed test?</h2>
+    <button type="button" id="stopTest">Yes, stop test</button>
+    <button type="button" id="continueTest">No, continue test</button>
+</div>
+
+<!-- This div hidden except when countdown needed to start a timed test-->
+<div class="countdown cf hide" id="topicCountdown">
+    <h2>Timed test is about to begin...</h2>
+    <h1 id="seconds">(num seconds here)</h1>
+</div>
+
+<!-- two layers of background - image plus transparent gray -->    
+<div class="backgroundImg">
+    <div class="backgroundShade">
+
+        <!--Animated start screens prompt user for name & level-->
+        <div class="getStarted cf" id="startScreen">
+            <div class="start1 cf">
+                <p class="rotateThisFadeOut">+</p>
+                <p class="slideFromRightFadeOut">Add</p>
+            </div>
+            <div class="start1 cf hide">
+                <p>-</p>
+                <p>Subtract</p>
+            </div>
+            <div class="start1 cf hide">
+                <p>&times;</p>
+                <p>Multiply</p>
+            </div>
+            <div class="start1 cf hide">
+                <p>&divide;</p>
+                <p>Divide</p>
+            </div>
+            <div class="start2 hide">
+                <h3>Your name:</h3>
+                <input type="text" maxlength="25" id="userName" placeholder="type your name here" />
+            </div>
+            <div class="start2 hide">
+                <h3>Click a level:</h3>
+                <button type="button" id="level1" value="0">Level<br>1</button>
+                <button type="button" id="level2" value="1">Level<br>2</button>
+                <button type="button" id="level3" value="2">Level<br>3</button>
+            </div>
+        </div>
+
+        <!-- user name & overall score tracked in bottom right corner of screen-->
+        <div class="track">
+                <p id="trackName"></p>
+                <br>
+                <p id="trackScore"></p>
+        </div>
+
+        <!--
+        This #chalkboard div is hidden until user selects level from start screen above.
+        The main menu and footer menu in this div allow user to navigate between
+        topics. Only one topic is visible at a time.
+        -->
+        <div class="backdrop hide" id="chalkboard">
+            <nav class="mainmenu" id="opMenu">
+                <!-- TBD: don't know that cf is needed here...-->
+                <ul class="menu cf"> 
+                    <li id="math_add" class="addDef">
+<!--                        <a href="#topicMathFacts"><p>+</p></a>-->
+                        <a href="#"><p>+</p></a>
+                    </li>
+                    <li id="math_subtract" class="subtractDef">
+                        <a href="#"><p>-</p></a>
+                    </li>
+                    <li id="math_multiply" class="multiplyDef">
+                        <a href="#"><p>&times;</p></a>
+                    </li>
+                    <li id="math_divide" class="divideDef">
+                        <a href="#"><p>&divide;</p></a>
+                    </li>
+                </ul>
+            </nav>        
+
+            <!--This div is hidden except when user selects 'Timer' option-->
+            <div class="timeHeader hide" id="testMsg" >
+                <div class="timerOn chalk">
+                    <i class='fa'></i>
+                </div>        
+                <h2 id="testInfo">(timer info)</h2>
+            </div>
+
+            <!-- 
+            The #topicMathFacts div includes a dynamic submenu (for various levels 
+            of the currently selected operation), 5 math problems and 30 buttons 
+            for clickable answers
+            -->
+            <div class="page" id="topicMathFacts">
+                <nav>
+                    <ul class="submenu chalk" id="levelMenu">
+                        <!--dynamic menu-->
+                    </ul>  
+                </nav>
+
+                <!-- #whiteboard div contains 5 problems & answer regions -->
+                <div class="whiteboard letterpress cf">
+                    <div class="cf">
+                    <div class="problem cf">
+                        <div class="top_el">
+                            <p id="topVal1"></p>
+                        </div>
+                        <div class="operator">    
+                            <p class="valop"></p>
+                        </div>
+                        <div class="bottom_el">
+                            <p id="bottomVal1"></p>
+                        </div>                
+                    </div>
+                    <div class="problem cf">
+                        <div class="top_el">
+                            <p id="topVal2">4</p>
+                        </div>
+                        <div class="operator">    
+                            <p class="valop">+</p>
+                        </div>
+                        <div class="bottom_el">
+                            <p id="bottomVal2">5</p>
+                        </div>
+                    </div>
+                    <div class="problem cf">
+                        <div class="top_el">
+                            <p id="topVal3">11</p>
+                        </div>
+                        <div class="operator">    
+                            <p class="valop">+</p>
+                        </div>
+                        <div class="bottom_el">
+                            <p id="bottomVal3">2</p>
+                        </div>
+                    </div>
+                    <div class="problem cf">
+                        <div class="top_el">
+                            <p id="topVal4">11</p>
+                        </div>
+                        <div class="operator">    
+                            <p class="valop">+</p>
+                        </div>
+                        <div class="bottom_el">
+                            <p id="bottomVal4">2</p>
+                        </div>
+                    </div>
+                    <div class="problem cf">
+                        <div class="top_el">
+                            <p id="topVal5">11</p>
+                        </div>
+                        <div class="operator">    
+                            <p class="valop">+</p>
+                        </div>
+                        <div class="bottom_el">
+                            <p id="bottomVal5">2</p>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="answer_region">    
+                        <input type="text" id="answer1" class="answerBox" maxlength=3 placeholder="?">
+                        <i class='fa fa-check'></i>
+                    </div>
+                    <div class="answer_region">    
+                        <input type="text" id="answer2" class="answerBox" maxlength=3 placeholder="?">
+                        <i class='fa fa-check'></i>
+                    </div>
+                    <div class="answer_region">    
+                        <input type="text" id="answer3" class="answerBox" maxlength=3 placeholder="?">
+                        <i class='fa fa-check'></i>
+                    </div>
+                    <div class="answer_region">    
+                        <input type="text" id="answer4" class="answerBox" maxlength=3 placeholder="?">
+                        <i class='fa fa-check'></i>
+                    </div>
+                    <div class="answer_region">    
+                        <input type="text" id="answer5" class="answerBox" maxlength=3 placeholder="?">
+                        <i class='fa fa-check'></i>
+                    </div>
+                </div>
+
+                <!-- .allNumbers div contains buttons users can click to
+                submit answers (alternatively they can type & enter answer). The
+                values on these buttons change to include zero or larger
+                numbers as needed, depending on level & operation. -->
+                <div class="allNumbers">
+                    <div class="numberButtons btn-group btn-group-justified" role="group">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=1>1</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=2>2</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=3>3</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=4>4</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=5>5</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=6>6</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=7>7</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=8>8</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=9>9</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=10>10</button>
+                        </div>
+                    </div>
+                    <div class="numberButtons btn-group btn-group-justified" role="group">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=11>11</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=12>12</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=13>13</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=14>14</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=15>15</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=16>16</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=17>17</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=18>18</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=19>19</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=20>20</button>
+                        </div>
+                    </div>
+                    <div class="numberButtons btn-group btn-group-justified" role="group">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=21>21</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=22>22</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=23>23</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=24>24</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=25>25</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=26>26</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=27>27</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=28>28</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=29>29</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-default" value=30>30</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--This div is hidden except when user selects 'Scores' option-->        
+            <div class="scores cf hide" id="topicMyScores">
+                <a href="#">
+                    <span title="Print results"><i class="printResults fa fa-print fa-3x"></i></span>
+                </a>
+                <h3 id="scores_user">(your name)</h3>
+                <h4 id="scores_date">Today's Date...</h4>
+                <h4 id="scores_numRange">Numbers...</h4>
+                <h4 id="scores_overall">Overall score...</h4>
+                <br>
+                <table>
+                    <thead>
+                        <tr>
+                            <th colspan="2">Level</th>
+                            <th colspan="3">Results</th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                </table>
+                    <div class="forceScroll">
+                        <table>
+                    <tbody class="addColor" id="addResults">
+                        <!-- HTML Validator did not like header above without td -->
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <tbody class="subtractColor" id="subtractResults">
+                    </tbody>
+                </table>
+                <table>
+                    <tbody class="multiplyColor" id="multiplyResults">
+                    </tbody>
+                </table>
+                <table>
+                    <tbody class="divideColor" id="divideResults">
+                    </tbody>
+                </table>
+                    </div>
+            </div>  
+
+            <!--This div is hidden except when user selects 'About' option-->        
+            <div class="about hide" id="topicInfo">
+                <div>
+                    <h3>About math facts</h3>
+                    <p>Develop addition, subtraction, multiplication and division skills by practicing online. Students work at a variety of levels, either in 'Practice' mode or 'Timer' mode. Scores can be printed at the end of each session to track progress and review missed problems.</p><br>
+                    <h3>Why does speed matter?</h3>
+                    <p>The ability to instantly recall math facts enables students to learn more advanced math with greater ease. For example, the word problem "how many ounces of milk are in six 8-ounce glasses?" can be solved quickly by a student who recalls the math fact 6 x 8 = 48. The same problem can be time-consuming and frustrating for a student who does not yet know that math fact. 
+                        <span>Practice improves speed, speed improves success, and success boosts confidence and enthusiasm for math!</span>
+                    </p><br>
+                    <h3>Immediate feedback for students</h3>
+                    <p>'Practice' mode provides prompt feedback by identifying each correct and incorrect answer immediately. The 'Timer' mode provides results AFTER each 1 minute timed test.</p><br>
+                    <h3>View or print scores</h3>
+                    <p>The 'Scores' option at the bottom of the page lists scores for the student's current session and provides details on any missed problems. Students can print the information by clicking on the printer icon at the top of the 'Scores' page. (Some browsers such as Google Chrome also have an option to save results to a PDF file.)</p><br>
+                    <h3>Do you have ideas for improvement?</h3>
+                    <p>Feedback from students, teachers and parents is welcome. Please send suggestions for improvement and/or details about any problems you encounter to dianezev@comcast.net. Questions are also welcome!</p><br>
+                    <h3>Developer input</h3>
+                    <p>Developer contributions and suggestions for improvement are welcome. This project is posted on <a target="_blank"  href="https://github.com/dianezev/mathfacts">Github.</a></p><br>
+                    <h3>by Diane Zevenbergen</h3>
+                    <ol>
+                        <li>email: dianezev@comcast.net</li>
+                        <li>
+                            LinkedIn: <a target="_blank" href="https://www.linkedin.com/in/dianezev">https://www.linkedin.com/in/dianezev</a>
+                        </li>
+                    </ol>
+                </div>
+            </div>    
+
+            <!-- footer menu options -->
+            <div class="footer chalk">
+                <nav>
+                    <ul>
+                        <li id="resumePractice" class="activeFooter">
+<!--                            <a href="#topicMathFacts">-->
+                            <a href="#">
+                                <i class="fa fa-pencil-square-o fa-fw"></i>Practice
+                            </a>
+                        </li>
+                        <li id="controlTimer">
+<!--                            <a href="#topicMathFacts">-->
+                            <a href="#">
+                                <i class="fa fa-hourglass-o fa-fw"></i>Timer
+                            </a>
+                        </li>
+                        <li id="goToScores">
+<!--                            <a href="#topicMathFacts">-->
+                            <a href="#">
+                                <i class="fa fa-file-text fa-fw"></i>Scores
+                            </a>
+                        </li>
+                        <li id="goToAbout">
+<!--                            <a href="#topicMathFacts">-->
+                            <a href="#">
+                                <i class="fa fa-info fa-fw"></i>About
+                            </a>
+                        </li>                
+                    </ul>
+                </nav>
+            </div>        
+        </div>     
+
+        <!-- credits display under chalkboard div -->
+        <div class="credit">
+            <small class="cf">
+                <span id="copyright" class="autoCenter"></span>
+            </small>
+        </div>    
+    </div>
+</div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="js/helpers/helpers.js"></script>
+    <script src="js/model/model.js"></script>
+    <script src="js/model/timer.js"></script>
+    <script src="js/view/view.js"></script>
+    <script src="js/controller/controller.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/events/events.js"></script>
+</body>
+</html>

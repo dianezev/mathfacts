@@ -1,0 +1,244 @@
+/******************************************************************
+1) Keyframes/animation Rules
+2) Media/print Rules
+******************************************************************/
+
+
+/******************************************************************
+*******************************************************************
+1) Keyframes/animation Rules
+*******************************************************************
+******************************************************************/
+/*
+@-webkit-keyframes
+@-moz-keyframes
+@-o-keyframes
+@keyframes
+*/
+/*
+  -webkit-transform
+  -moz-transform
+  -ms-transform ASK CAROLYN
+  -o-transform
+  transform
+*/
+@-webkit-keyframes roll {
+    0%, 100% { -webkit-transform: rotate(-6deg); }
+    50% { -webkit-transform: rotate(6deg); }
+}
+@-moz-keyframes roll {
+    0%, 100% { -moz-transform: rotate(-6deg); }
+    50% { -moz-transform: rotate(6deg); }
+}
+@-o-keyframes roll {
+    0%, 100% { -o-transform: rotate(-6deg); }
+    50% { -o-transform: rotate(6deg); }
+}
+@keyframes roll {
+    0%, 100% { transform: rotate(-6deg); }
+    50% { transform: rotate(6deg); }
+}
+@-webkit-keyframes littleRoll {
+    0%, 100% { -webkit-transform: rotate(-3deg); }
+    50% { -webkit-transform: rotate(3deg); }
+}
+@-moz-keyframes littleRoll {
+    0%, 100% { -moz-transform: rotate(-3deg); }
+    50% { -moz-transform: rotate(3deg); }
+}
+@-o-keyframes littleRoll {
+    0%, 100% { -o-transform: rotate(-3deg); }
+    50% { -o-transform: rotate(3deg); }
+}
+@keyframes littleRoll {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+}
+@-webkit-keyframes tinyRoll {
+    0%, 100% { -webkit-transform: rotate(-1deg); }
+    50% { -webkit-transform: rotate(1deg); }
+}
+@-moz-keyframes tinyRoll {
+    0%, 100% { -moz-transform: rotate(-1deg); }
+    50% { -moz-transform: rotate(1deg); }
+}
+@-o-keyframes tinyRoll {
+    0%, 100% { -o-transform: rotate(-1deg); }
+    50% { -o-transform: rotate(1deg); }
+}
+@keyframes tinyRoll {
+    0%, 100% { transform: rotate(-1deg); }
+    50% { transform: rotate(1deg); }
+}
+@-webkit-keyframes slipFromRight {
+    0% {
+        -webkit-transform: translate(300px, 0);    
+        font-size: 0%;
+    }
+    100% { -webkit-transform: translate(0, 0); }
+}
+@-moz-keyframes slipFromRight {
+    0% {
+        -moz-transform: translate(300px, 0);    
+        font-size: 0%;
+    }
+    100% { -moz-transform: translate(0, 0); }
+}
+@-o-keyframes slipFromRight {
+    0% {
+        -o-transform: translate(300px, 0);    
+        font-size: 0%;
+    }
+    100% { -o-transform: translate(0, 0); }
+}
+@keyframes slipFromRight {
+    0% {
+        transform: translate(300px, 0);    
+        font-size: 0%;
+    }
+    100% { transform: translate(0, 0); }
+}
+@-webkit-keyframes slipFromLeft {
+    0% {
+        -webkit-transform: translate(-100vw, 0);    
+        font-size: 0%;
+    }
+    100% { -webkit-transform: translate(0, 0); }
+}
+@-moz-keyframes slipFromLeft {
+    0% {
+        -moz-transform: translate(-100vw, 0);    
+        font-size: 0%;
+    }
+    100% { -moz-transform: translate(0, 0); }
+}
+@-o-keyframes slipFromLeft {
+    0% {
+        -o-transform: translate(-100vw, 0);    
+        font-size: 0%;
+    }
+    100% { -o-transform: translate(0, 0); }
+}
+@keyframes slipFromLeft {
+    0% {
+        transform: translate(-100vw, 0);    
+        font-size: 0%;
+    }
+    100% { transform: translate(0, 0); }
+}
+@-webkit-keyframes shadeInOut {
+    0%, 100% { opacity: 0; }
+    80% { opacity: .8; }
+}
+@-moz-keyframes shadeInOut {
+    0%, 100% { opacity: 0; }
+    80% { opacity: .8; }
+}
+@-o-keyframes shadeInOut {
+    0%, 100% { opacity: 0; }
+    80% { opacity: .8; }
+}
+@keyframes shadeInOut {
+    0%, 100% { opacity: 0; }
+    80% { opacity: .8; }
+}
+@-webkit-keyframes steadyInOut {
+    0%, 100% { opacity: .05; }
+    50% { opacity: .9; }
+}
+@-moz-keyframes steadyInOut {
+    0%, 100% { opacity: .05; }
+    50% { opacity: .9; }
+}
+@-o-keyframes steadyInOut {
+    0%, 100% { opacity: .05; }
+    50% { opacity: .9; }
+}
+@keyframes steadyInOut {
+    0%, 100% { opacity: .05; }
+    50% { opacity: .9; }
+}
+@-webkit-keyframes shadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@-moz-keyframes shadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@-o-keyframes shadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@keyframes shadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@-webkit-keyframes bubbles {
+    0% {
+        opacity: 0; 
+        -webkit-transform: scale(.1);
+    }
+    100% { opacity: .8; }
+}
+@-moz-keyframes bubbles {
+    0% {
+        opacity: 0; 
+        -moz-transform: scale(.1);
+    }
+    100% { opacity: .8; }
+}
+@-o-keyframes bubbles {
+    0% {
+        opacity: 0; 
+        -o-transform: scale(.1);
+    }
+    100% { opacity: .8; }
+}
+@keyframes bubbles {
+    0% {
+        opacity: 0; 
+        transform: scale(.1);
+    }
+    100% { opacity: .8; }
+}
+
+/******************************************************************
+*******************************************************************
+2) Media/print Rules
+*******************************************************************
+******************************************************************/
+/*
+TBD: from Chris Coyier CSS Tricks
+Incorporate when making app responsive
+body {
+  font-size: x-large;
+}
+@media (max-width: 1000px) {
+  body { font-size: large; }
+}
+@media (max-width: 500px) {
+  body { font-size: medium; }
+}
+*/
+@media print {
+    tr, tr.newLevel { font-size: 11px; }
+    
+    /*    Need to override overflow:auto to make multiple pages print*/
+    .backgroundShade { overflow: visible; }
+    .forceScroll {
+        clear: both;
+        overflow: visible;
+        padding-right: 20px;
+    }
+    .mainmenu, .footer, .printResults, .credit, .backgroundImg img, .track {
+        display: none;
+    }
+    .scores { display: block; }
+    .scores h3 { font-size:14px; }
+    .scores h4 { font-size:12px; }
+/* TBD: this @page from http://www.smashingmagazine.com/2013/03/tips-and
+    -tricks-for-print-style-sheets/ but CSS validator did not like. 
+    Seems to def to auto in Chrome anyway */
+/*    @page { margin: auto; }     */
+}
