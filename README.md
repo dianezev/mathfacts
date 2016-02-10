@@ -1,5 +1,5 @@
 ##About Math Facts ([fastermathfacts.org](http://www.fastermathfacts.org))##
-###By Diane Zevenbergen, dianezev@comcast.net###
+By Diane Zevenbergen, dianezev@comcast.net
 
 ####Goals####
 > * Help students learn to recall basic math facts quickly
