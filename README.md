@@ -1,12 +1,11 @@
-##About [fastermathfacts.org](http://www.fastermathfacts.org)##
+##About Math Facts ([fastermathfacts.org](http://www.fastermathfacts.org))##
 ###By Diane Zevenbergen, dianezev@comcast.net###
-#####February, 2016#####
 
-####Purpose####
-> * To help students learn to recall basic math facts quickly
-> * To provide timed results so that students, teachers and parents can monitor progress
-> * To provide instant feedback to students
-> * To free up teachers' time with automated scoring
+####Goals####
+> * Help students learn to recall basic math facts quickly
+> * Provide timed results so that students, teachers and parents can monitor progress
+> * Provide instant feedback to students
+> * Free up teachers' time with automated scoring
 
 ####To Contribute to this Project####
 >To make a correction or improvement to this project, just fork the repository to your account, make the change you'd like and submit a pull request. I'm new to Javascript and welcome suggestions on improving organization, readability and efficiency as well as content improvement.
@@ -14,6 +13,7 @@
 ####Still To Be Done####
 > * Incorporate PHP and/or templates to simplify index.html
 > * Incorporate templates to remove HTML from Javascript
+> * Address browser differences (currently works best in Chrome)
 > * Add code to make responsive for various devices, especially tablets
 > * Add server-side functionality to track student progress over time
 
@@ -43,8 +43,8 @@ _The following Javascript files assign methods to the namespace **'FMF'**:_
 >
 > ####**_helpers.js_**####
 > This file defines **FMF.helpers** and contains the following helper functions: 
->  * leadCap() returns string with leading uppercase char
->  * validateNumber() returns true when number key pressed, false otherwise
+>  * leadCap() returns string with leading uppercase character
+>  * validateNumber() returns true when a number key is pressed, false otherwise
 >  * dateInfo() returns a custom date string
 >
 > ####**_events.js_**####
