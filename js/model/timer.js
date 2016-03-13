@@ -178,8 +178,6 @@ FMF.model = (function() {
                 var text1 = helpers.leadCap(opName) + ': ' + result.label;
                 var htmlErrors = '';
                 var errorArray = [];
-                var incorrect = '';
-                var correction = '';
                 var tblHead = '';
                 var msg = '';
 
