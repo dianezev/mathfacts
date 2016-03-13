@@ -153,8 +153,6 @@ FMF.template = (function() {
                 var htmlTimed = '';
                 var htmlErrors = '';
                 var htmlOverall = '';
-                var incorrect = '';
-                var correction= '';
                 var type = '';
 
                 // Loop through all levels & display results for each
@@ -248,7 +246,7 @@ FMF.template = (function() {
             
             return subMenuHTML;
         },
-    }
+    };
 
     return publicAPI;
 })();
