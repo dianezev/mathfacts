@@ -11,11 +11,10 @@ By Diane Zevenbergen, dianezev@comcast.net
 >To make a correction or improvement to this project, just fork the repository to your account, make the change you'd like and submit a pull request. I'm new to Javascript and welcome suggestions on improving organization, readability and efficiency as well as content improvement.
 
 ####Still To Be Done####
-> * Incorporate PHP and/or templates to simplify index.html
-> * Incorporate templates to remove HTML from Javascript
-> * Address browser differences (currently works best in Chrome)
-> * Add code to make responsive for various devices, especially tablets
-> * Add server-side functionality to track student progress over time
+> * Prevent pop-up of soft keyboard on tablets/phones.
+> * Add code to make responsive for various devices & screen sizes, especially tablets.
+> * Address browser differences (currently works best in Chrome).
+> * Add server-side functionality to track student progress over time.
 
 ####Under the Hood####
 _The following Javascript files assign methods to the namespace **'FMF'**:_
@@ -46,6 +45,9 @@ _The following Javascript files assign methods to the namespace **'FMF'**:_
 >  * leadCap() returns string with leading uppercase character
 >  * validateNumber() returns true when a number key is pressed, false otherwise
 >  * dateInfo() returns a custom date string
+>
+> ####**_template.js_**####
+> This file defines **FMF.templates** and contains functions that use Underscore's _.template method for dynamic portions of the HTML.
 >
 > ####**_events.js_**####
 > This file contains the event handlers.

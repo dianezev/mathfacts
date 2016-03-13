@@ -66,9 +66,9 @@ FMF.model = (function() {
     var level2labelsDiv = level2labels;
     var labelRangesDiv = [ level0labelsDiv, level1labelsDiv,
                          level2labelsDiv];
+    var template = FMF.template;
     
     var publicAPI = {
-
         diff: -1,    //Set in controller.handleStartLevel
         drillRange: [],    //Set in model.setDrillRanges
         drillRangeDiv: [],    //Set in model.setDrillRanges
@@ -84,6 +84,7 @@ FMF.model = (function() {
         results: {},    //Set in model.initializeResults
         tScore: 0,      //Incremented with each correct answer
         user: '(name)',
+
 
         bumpUp: function() {
             var problemIndex = this.problemIndex;
@@ -135,7 +136,7 @@ FMF.model = (function() {
 
             $('.valop').text(symbol);
             setColors();
-            updateLevelMenu(lblArray);
+            updateLevelMenu();
 
             // Adjust colors to reflect selected operator
             function setColors() {
@@ -176,17 +177,11 @@ FMF.model = (function() {
                 }
             }
 
-            function updateLevelMenu(labelRange) {
-                var listHTML = '';
-
-                // Create html string used to generate submenu
-                for (var i = 0, l = labelRange.length; i < l ; i +=1) {
-                    listHTML += '<li><a href="#">&nbsp&nbsp' + operator +
-                                '' + labelRange[i] + '</a></li>';
-                }
+            function updateLevelMenu() {
+                var subMenuHTML = template.getSubMenuHTML(lblArray, operator);
 
                 // Update list options in levelMenu
-                $('#levelMenu').html(listHTML);
+                $('#levelMenu').html(subMenuHTML);
 
                 // Intially default to first level
                 $('#levelMenu li').removeClass('active');

@@ -3,13 +3,20 @@ FMF = window.FMF || {};
 FMF.view = (function() {
     'use strict';   
 
-    var BTN_COUNT = 30;
     var model = FMF.model;
+    var template = FMF.template;
     var helpers = FMF.helpers;
+
+    var buttonsPerRow = 10;
+    var buttonRows = 3;
     var countdownTimer = -1;
     var introTimer = -1;
+    var perPage = model.perPage;
+    var totalButtons = buttonRows * buttonsPerRow;
     
     var publicAPI = {
+        buttonsPerRow: 10,
+        rows: 3,
         dateInfo: helpers.dateInfo(),
         liveIndex: 1,
         trapDblClick: false,
@@ -23,7 +30,6 @@ FMF.view = (function() {
             }
         },
         displayNextSet: function(bumpUp) {
-            var perPage = model.perPage;
             var length = model.problemSet.length;
             var problemIndex;
             var problemSet;
@@ -69,7 +75,6 @@ FMF.view = (function() {
             $('[id^="answer"]').addClass('invisible');
         },
         nextProblem: function (answer, correctAns, isTimed) {
-            var perPage = model.perPage;
             var liveIndex = this.liveIndex;
             var myThis = this;
             
@@ -149,7 +154,6 @@ FMF.view = (function() {
         },
         setHighlight: function(isFirst) {
             var problemIndex = model.problemIndex;
-            var perPage = model.perPage;
             var liveAnswer;
 
             /*
@@ -167,45 +171,51 @@ FMF.view = (function() {
 
             /*
              * For all multiplication problems, or for FIRST of new problem
-             * set in addition, subtraction or division: call setNumbers to 
-             * adjust #s on buttons if needed
+             * set in addition, subtraction or division, check that
+             * the number range on the buttons includes answer for 
+             * current problem.
              */
             if ((model.opName === 'multiply') || (isFirst)) {
-                setNumbers(problemIndex);
+                var start = getStart(problemIndex);
+                
+                // Adjust #s on buttons if start value needs to be changed
+                if (start !== 
+                        Number($('.numberButtons button:eq(0)').text())) {
+
+                    // Update values on number buttons
+                    for (var i = 0; i < totalButtons; i++) {
+                        $('.numberButtons button:eq(' + i + ')').
+                                text(start + i);
+                    }
+
+                }
             }
-            
+
             /*
-             * setNumbers fcn adjusts the numbers on the buttons that
-             * users can click on to answer problems.
-             * For addition, subtraction & division the buttons default to
-             * 1 - 30 or 0 - 29, depending on whether numRange[diff] starts
-             * with 0 or 1. This range covers all possible
-             * answers for the 3 operations, so buttons are just set at the
-             * beginning of a new problem set. But for MULTIPLICATION,
-             * a wider range of numbers is needed.  This
-             * function checks the answer value for each mult. problem and
-             * adjusts the values on the buttons when needed.
+             * Users can click on numeric buttons to answer problems.
+             * For addition, subtraction & division the buttons default to 1 - 30
+             * or 0 - 29, depending on whether numRange[diff] starts with 0 or 1.
+             * This range covers all possible answers for the 3 operations, so
+             * buttons are just set at the beginning of a new problem set.
+             * But for MULTIPLICATION, a wider range of numbers is needed.  This
+             * function returns the start number needed for the first button.
              */
-            function setNumbers(index) {
+            function getStart(index) {
 
                 var lowestVal = model.numRange[0];
                 var correctAns;
                 var start;
 
                 correctAns = model.problemSet[index][2];
-                start = lowestVal + Math.floor((correctAns -
-                        lowestVal)/BTN_COUNT) * BTN_COUNT;
+                start = lowestVal + Math.floor((correctAns - lowestVal)/totalButtons) * totalButtons;
 
-                // Adjust #s on buttons if needed
-                if (start !==
-                        Number($('.numberButtons button:eq(0)').text())) {
-
-                    for (var i = 0; i < 30; i+=1) {
-                        $('.numberButtons button:eq(' + i + ')').
-                                text(start + i);
-                    }
-                }
+                return start;
             }
+        },
+        setupHTML: function(start) {
+            $('#problems').html(template.getProblemsHTML(perPage));
+            $('#solutions').html(template.getAnswersHTML(perPage));
+            $('#allButtons').html(template.getButtonsHTML(start, buttonRows, buttonsPerRow));
         },
         setTracker: function(makeVisible) {
             if (makeVisible) {
@@ -219,11 +229,13 @@ FMF.view = (function() {
             var all = [0,0];
             var percent;
             var scoreText = '';
+            var results = model.results;
+            var scoresHTML = '';
 
-            updateScores('add','#addResults', '+',all);
-            updateScores('subtract','#subtractResults', '-',all);
-            updateScores('multiply','#multiplyResults', '&times;',all);
-            updateScores('divide','#divideResults', '&divide;',all);
+            updateScores('Add','#addResults', '+',all, results.add);
+            updateScores('Subtract','#subtractResults', '-',all, results.subtract);
+            updateScores('Multiply','#multiplyResults', '&times;',all, results.multiply);
+            updateScores('Divide','#divideResults', '&divide;',all, results.divide);
 
             // Get cumulative percentage & update header info
             percent = Math.round((all[0]/all[1]) * 100);
@@ -236,101 +248,18 @@ FMF.view = (function() {
             }
 
             $('#scores_overall').text(scoreText);
-
+            
             /*
              * Loops through practice & timed results for all levels
-             * for a given operator 'opName'
+             * for a given operator 
              * and appends the results to the 'id' selector
              */
-            function updateScores(opName, id, operator, all) {
-                var title = helpers.leadCap(opName);
-                var correct = 0;
-                var attempted = 0;
-                var percent = 0;
-                var htmlLevel = '';
-                var htmlPractice = '';
-                var htmlTimed = '';
-                var htmlErrors = '';
-                var htmlOverall = '';
-                var incorrect = '';
-                var correction= '';
-                var results = model.results;
-
-                // Loop through all levels & display results for each
-                $.each(results[opName].level, function(i,level) {
-                    htmlLevel = '<tr class="newLevel"><td>' + title +
-                                ':&nbsp&nbsp&nbsp' + level.label + '</td>';
-                    htmlTimed = '';
-
-                    if (level.practice[1] !== 0) {
-                        correct = level.practice[0];
-                        attempted = level.practice[1];
-                        all[0] += correct;
-                        all[1] += attempted;
-                        percent = Math.round((correct/attempted)*100);
-                        htmlPractice = htmlLevel +
-                                       '<td>Practice:</td><td>+' +
-                                        correct + '/' + attempted +
-                                        '</td><td>' + percent +
-                                        '%</td></tr>';
-                        htmlOverall += htmlPractice;
-                    }
-
-                    // Get results for each timed test within level
-                    $.each(level.timed, function(j, test) {
-                        correct = test[0];
-                        attempted = test[1];
-                        all[0] += correct;
-                        all[1] += attempted;
-
-                        // Don't show results if 0 problems attempted
-                        if (attempted > 0) {
-                            percent = Math.round((correct/attempted)*100);
-
-                            /*
-                             * If there are no practice results, begin Test
-                             * section with level info (i.e. 'Add +1...12')
-                             */
-                            if ((level.practice[1] === 0)&&(j===0)) {
-                                htmlTimed = htmlTimed + htmlLevel +
-                                            '<td>Timed test ' + (j+1) +
-                                            ':</td><td>+' + correct + '/' +
-                                            attempted + '</td><td>' +
-                                            percent + '%</td></tr>';
-                            } else {
-                                htmlTimed = htmlTimed +
-                                            '<tr><td></td><td>Timed test ' +
-                                            (j+1) + ':</td><td>+' + correct +
-                                            '/' + attempted + '</td><td>' +
-                                            percent + '%</td></tr>';
-                            }
-                        }
-                    });
-
-                    htmlOverall += htmlTimed;
-
-                    if (level.errors.length > 0) {
-                        htmlErrors = '<tr><td></td><td>Errors: </td>';
-                        $.each(level.errors, function(j,error) {
-                            if (j > 0) htmlErrors = htmlErrors +
-                                                    '<tr><td></td><td></td>';
-                            incorrect = error[0] + ' ' + operator + ' ' +
-                                        error[1] + ' = ' + error[2];
-                            correction = '<span>Correct answer: ' +
-                                         error[3] + '</span>';
-                            htmlErrors = htmlErrors + '<td>' + incorrect +
-                                         '</td><td>' + correction +
-                                         '</td></tr>';
-                        });
-
-                        htmlOverall += htmlErrors;
-                    }
-                });
+            function updateScores(title, id, operator, all, results) {
+                scoresHTML = template.getOverallScoresHTML(title, id, operator, all, results);
 
                 // Update results for given operator (all levels)
-                $(id).empty().append(htmlOverall);
+                $(id).empty().append(scoresHTML);
 
-                return all;
             }
         },
         showStartScreen: function() {

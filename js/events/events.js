@@ -1,3 +1,5 @@
+//(function () {
+
 // Change level & active submenu item when clicked
 $('#levelMenu').on('click', 'li', function(e) {
     var levels = $('#levelMenu li');
@@ -35,7 +37,7 @@ $('.printResults').on('click', function() {
 });
 
 // If user clicks a numeric button, enter answer & check
-$('.btn').on('click', function() {
+$('#allButtons').on('click', '.btn', function() {
     if (!FMF.view.trapDblClick) {
         FMF.controller.handleAnswer($(this).text());
     }
@@ -77,7 +79,7 @@ $('.btn').hover(function() {
  * Also not sure if I'm supposed to call a function here &
  * keep this short, but I don't want to pass event (for prevDef)
  */
-$('.answer_region').on('keydown', function(e) {
+$('#solutions').on('keydown', 'input', function(e) {
     var key = e.which;
 
     // Prevent default for Tab
@@ -95,3 +97,4 @@ $('.answer_region').on('keydown', function(e) {
         e.preventDefault();
     }    
 });
+//})();

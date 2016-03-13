@@ -25,6 +25,7 @@ FMF.model = (function() {
     var model = FMF.model;
     var helpers = FMF.helpers;
     var testTimer = -1;
+    var template = FMF.template;
 
     /*
      * This function displays font-awesome's hourglass in
@@ -66,6 +67,7 @@ FMF.model = (function() {
         var i = 0;
         var numSizes = SIZES.length;
         var numColors = COLORS.length;
+        var bubbleHTML = template.getBubbleHTML();
         var c;
         var s;
         var l;
@@ -81,9 +83,9 @@ FMF.model = (function() {
 
                 // Add a div for a bubble
                 if ($('#bubbleContainer').is(':empty')){
-                    $('#bubbleContainer').html('<div class="blob"></div>');
+                    $('#bubbleContainer').html(bubbleHTML);
                 } else {
-                    $('#bubbleContainer div:last').after('<div class="blob"></div>');
+                    $('#bubbleContainer div:last').after(bubbleHTML);
                 }
 
                 // Use randoms to pick color, size & location for bubble
@@ -139,6 +141,9 @@ FMF.model = (function() {
             var msg = timerText + ' timer is ON...';
             var operator = this.operator;
             var myThis = this;
+            var data = {msg: msg, 
+                        opName: helpers.leadCap(model.opName),
+                        label: result.label};
 
             $('#testMsg').removeClass('hide');
 
@@ -147,8 +152,7 @@ FMF.model = (function() {
             $('.timerOn').addClass('fadeInAndOut');
             $('.timerOn i').addClass('fa fa-hourglass-start');
 
-            $('#testInfo').html('<p>' + msg + '</p><p>' +
-                    helpers.leadCap(model.opName) + ': ' + result.label + '</p>');
+            $('#testInfo').html(template.getTimerStartHTML(data));
 
             testTimer = window.setTimeout(endTimedTest, TIMER_MS);
             this.isTimed = true;
@@ -171,10 +175,7 @@ FMF.model = (function() {
                 var attempted = result.timed[testCount][1];
                 var missed = attempted - correct;
                 var percent = Math.round((correct/attempted) * 100);
-                var text1 = '<p>' + helpers.leadCap(opName) + ': ' + result.label;
-                var text2 = '<p>Score: ' + correct + '/' + attempted +
-                            '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<span>' +
-                            percent + '%</span></p>';
+                var text1 = helpers.leadCap(opName) + ': ' + result.label;
                 var htmlErrors = '';
                 var errorArray = [];
                 var incorrect = '';
@@ -197,15 +198,7 @@ FMF.model = (function() {
                     errorArray = result.errors.slice(result.errors.length -
                                 missed);
 
-                    $.each(errorArray, function(j, error) {
-                        htmlErrors = htmlErrors + '<tr>';
-                        incorrect = error[0] + ' ' + operator + ' ' +
-                                    error[1] + ' = ' + error[2];
-                        correction = '<span>Correct answer: ' + error[3] +
-                                     '</span>';
-                        htmlErrors = htmlErrors + '<td>' + incorrect +
-                                     '</td><td>' + correction + '</td></tr>';
-                    });
+                    htmlErrors = template.getTimerDataHTML(errorArray, operator);
 
                 // Hide error table if no errors
                 } else {
@@ -220,8 +213,8 @@ FMF.model = (function() {
                         tblHead = missed + ' Errors';
                     }
                     $('#test_time').empty().append(timerText + ' test');
-                    $('#test_level').empty().append(text1);
-                    $('#test_correct').empty().append(text2);
+                    $('#test_level').html(text1);
+                    $('#test_correct').html(template.getTimerScoreHTML(correct, attempted, percent));
                     $('#topicTestResults th').empty().append(tblHead);
                     $('#topicTestResults tbody').empty().append(htmlErrors);
                     $('#topicTestResults').removeClass('hide');
