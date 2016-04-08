@@ -83,7 +83,7 @@ FMF.model = (function() {
         problemSet: [],     // Set in model.getProblemArray
         results: {},    //Set in model.initializeResults
         tScore: 0,      //Incremented with each correct answer
-        user: '(name)',
+        user: '',
 
 
         bumpUp: function() {
@@ -145,10 +145,19 @@ FMF.model = (function() {
 
                 // Remove any of the color classes before resetting
                 $('[id^="answer"]').removeClass('error');
-                $('.page').removeClass('addColor');
-                $('.page').removeClass('subtractColor');
-                $('.page').removeClass('multiplyColor');
-                $('.page').removeClass('divideColor');
+                if ($('.page').hasClass('addColor')) {
+                    $('.page').removeClass('addColor');
+                    $('.subLevels').removeClass('addColor');
+                } else if ($('.page').hasClass('subtractColor')) {
+                    $('.page').removeClass('subtractColor');
+                    $('.subLevels').removeClass('subtractColor');
+                } else if ($('.page').hasClass('multiplyColor')) {
+                    $('.page').removeClass('multiplyColor');
+                    $('.subLevels').removeClass('multiplyColor');
+                } else if ($('.page').hasClass('divideColor')) {
+                    $('.page').removeClass('divideColor');
+                    $('.subLevels').removeClass('divideColor');
+                }
 
                 /*
                  * Set colors (yellow = wrong answer, blue = addition
@@ -156,12 +165,16 @@ FMF.model = (function() {
                  */
                 if (operator === '+') {
                     $('.page').addClass('addColor');
+                    $('.subLevels').addClass('addColor');
                 } else if (operator === '-') {
                     $('.page').addClass('subtractColor');
+                    $('.subLevels').addClass('subtractColor');
                 } else if (operator === '&times;') {
                     $('.page').addClass('multiplyColor');
+                    $('.subLevels').addClass('multiplyColor');
                 } else if (operator === '&divide;') {
                     $('.page').addClass('divideColor');
+                    $('.subLevels').addClass('divideColor');
                 }
 
                 // Adjust colors in main menu
@@ -210,7 +223,7 @@ FMF.model = (function() {
 
                 /*
                  * If not timed test, add 'error' class to highlight error
-                 * (decided not to distract users with highlight during
+                 * (don't distract users with highlight during
                  * a timed test)
                  */
                 if(!isTimed) {
@@ -235,7 +248,7 @@ FMF.model = (function() {
                 }
 
                 /*
-                 * If not timed test, display green check mark to
+                 * If not timed test, display check mark to
                  * indicate correct answer (& fade out)
                  */
                 if(!isTimed) {

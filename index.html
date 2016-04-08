@@ -4,9 +4,10 @@
     fastermathfacts.org by Diane Zevenbergen, dianezev@comcast.net
     
     THIS IS A WORK IN PROGRESS. STILL TO BE DONE:
-    1. Additional work to make app responsive for various media.
-    2. Browser specific improvements, particularly Safari.
-    3. Add'l notes on planned improvements in script.js.
+    1. Additional work to improve responsiveness for various media.
+    2. Browser specific improvements.
+    3. Store JSON results in localStorage and add features to compare progress over time
+    4. Expand to server-side storage.
     
     This app is designed to help students practice addition, subtraction,
     multiplication and division at a wide variety of levels.
@@ -16,6 +17,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="icon" type="image/ico" href="images/favicon.ico">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Short+Stack' rel='stylesheet' type='text/css'>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -24,58 +27,112 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/smoothness/jquery-ui.css" />
     <link rel="stylesheet" href="master.css">
+    <link rel="stylesheet" type="text/css" href="css/screen_lg.css" />
+    <link rel="stylesheet" type="text/css" media="only screen and (min-width:50px) and (max-width:775px)"   href="css/screen_sm.css">
+    <link rel="stylesheet" type="text/css" media="only screen and (min-width:776px) and (max-width:1240px)"  href="css/screen_med.css">
+    
     <title>Math Facts: Gain fluency in addition, subtraction, multiplication and division</title>
-    <meta name="description=" content="Faster Math Facts is a free online tool that helps students develop fluency in addition, subtraction, multiplication and division. Practice sessions and one-minute timed tests provide instant feedback to students at a variety of levels. A print/save feature makes it easy for teachers and parents to track a student's progress.">
+    <meta name="description=" content="Faster Math Facts is a free online tool that helps students develop fluency in addition, subtraction, multiplication and division. Practice sessions and one-minute timed tests provide instant feedback to students at a variety of levels. A print/save feature makes it easy for teachers and parents to track a student's progress. By Diane Davis Zevenbergen">
 </head>
 <body>
-
-<!-- two layers of background - image plus transparent gray -->    
-<div class="backgroundImg">
-    <div class="backgroundShade">
+<div class="backgroundImg">    
 
         <!--Animated start screens prompt user for name & level-->
         <div class="getStarted cf" id="startScreen">
-            <div class="start1 cf">
-                <p class="rotateThisFadeOut">+</p>
-                <p class="slideFromRightFadeOut">Add</p>
+            <div class="start2">
+                <h1>
+                    <span class="addColor">+</span><span class="subtractColor">-</span><span class="multiplyColor">&times;</span><span class="divideColor">&divide;</span>
+                </h1>
+                <h6>Welcome to fastermathfacts.org!</h6>
+                <h3>Sign in:</h3>
+                <input type="text" maxlength="25" id="userName" placeholder="your name" />
             </div>
-            <div class="start1 cf hide">
-                <p>-</p>
-                <p>Subtract</p>
-            </div>
-            <div class="start1 cf hide">
-                <p>&times;</p>
-                <p>Multiply</p>
-            </div>
-            <div class="start1 cf hide">
-                <p>&divide;</p>
-                <p>Divide</p>
-            </div>
-            <div class="start2 hide">
-                <h3>Your name:</h3>
-                <input type="text" maxlength="25" id="userName" placeholder="type your name here" />
-            </div>
-            <div class="start2 hide">
-                <h3>Click a level:</h3>
-                <button type="button" id="level1" value="0">Level<br>1</button>
-                <button type="button" id="level2" value="1">Level<br>2</button>
-                <button type="button" id="level3" value="2">Level<br>3</button>
+            <div class="start2">
+                <h3>Choose a level:</h3>
+                <button type="button" id="level1" value="0">1</button>
+                <button type="button" id="level2" value="1">2</button>
+                <button type="button" id="level3" value="2">3</button>
             </div>
         </div>
 
         <!-- user name & overall score tracked in upper left corner of screen-->
         <div class="track">
                 <p id="trackName"></p>
-                <br>
                 <p id="trackScore"></p>
         </div>
 
+    
         <!--
         This #chalkboard div is hidden until user selects level from start screen above.
-        The main menu and footer menu in this div allow user to navigate between
+        The main menu and sidebar menu in this div allow user to navigate between
         topics. Only one topic is visible at a time.
-        -->
-        <div class="backdrop hide" id="chalkboard">
+        Note that for display reasons the main menu & submenu overlap this div.
+        -->    
+        <div class = "frameApp cf hide" id="chalkboard">
+            <div class="sidebar">
+                <nav>
+                    <ul>
+                        <li id="resumePractice" class="activeSidebar">
+                            <a href="#">
+                                <i class="fa fa-pencil-square-o fa-fw">
+                                    <span class= "chevron">
+                                        <i class="fa fa-chevron-right"></i>
+                                    </span>
+                                </i>
+                                <label>Practice
+                                    <span class= "chevron">
+                                        <i class="fa fa-chevron-right"></i>
+                                    </span>
+                                </label>
+                                
+                            </a>
+                        </li>
+                        <li id="controlTimer">
+                            <a href="#">
+                                <i class="fa fa-hourglass-o fa-fw">
+                                    <span class= "chevron">
+                                        <i class="fa fa-chevron-right"></i>
+                                    </span>
+                                </i>
+                                <label>Timer
+                                    <span class= "chevron">
+                                        <i class="fa fa-chevron-right"></i>
+                                    </span>
+                                </label>
+                            </a>
+                        </li>
+                        <li id="goToScores">
+                            <a href="#">
+                                <i class="fa fa-file-text fa-fw">
+                                    <span class= "chevron">
+                                        <i class="fa fa-chevron-right"></i>
+                                    </span>
+                                </i>
+                                <label>Scores
+                                    <span class= "chevron">
+                                        <i class="fa fa-chevron-right"></i>
+                                    </span>
+                                </label>
+                            </a>
+                        </li>
+                        <li id="goToAbout">
+                            <a href="#">
+                                <i class="fa fa-info fa-fw">
+                                    <span class= "chevron">
+                                        <i class="fa fa-chevron-right"></i>
+                                    </span>
+                                </i>
+                                <label>About
+                                    <span class= "chevron">
+                                        <i class="fa fa-chevron-right"></i>
+                                    </span>
+                                </label>
+                            </a>
+                        </li>                
+                    </ul>
+                </nav>
+            </div>        
+            <div class="backdrop">
             <nav class="mainmenu" id="opMenu">
                 <!-- TBD: don't know that cf is needed here...-->
                 <ul class="menu cf"> 
@@ -93,6 +150,11 @@
                     </li>
                 </ul>
             </nav>        
+            <nav class="subLevels">
+                <ul class="submenu chalk" id="levelMenu">
+                    <!--See code in template.getSubMenuHTML-->
+                </ul>  
+            </nav>
 
             <!--This div is hidden except when user selects 'Timer' option-->
             <div class="timeHeader hide" id="testMsg" >
@@ -102,17 +164,8 @@
                 <h2 id="testInfo">(timer info)</h2>
             </div>
 
-            <!-- 
-            The #topicMathFacts div includes a dynamic submenu (for various levels 
-            of the currently selected operation), 5 math problems and 30 buttons 
-            for clickable answers
-            -->
+
             <div class="page" id="topicMathFacts">
-                <nav>
-                    <ul class="submenu chalk" id="levelMenu">
-                        <!--See code in template.getSubMenuHTML-->
-                    </ul>  
-                </nav>
 
                 <!-- #whiteboard div contains problems & answer regions -->
                 <div class="whiteboard letterpress cf">
@@ -132,7 +185,7 @@
                     <!-- See code in template.getButtonsHTML() -->
                 </div>
             </div>
-
+                
             <!--This div is hidden except when user selects 'Scores' option-->        
             <div class="scores cf hide" id="topicMyScores">
                 <a href="#">
@@ -163,102 +216,79 @@
                         </tr>
                     </thead>
                 </table>
-                
-                <div class="forceScroll">
-                    <table>
-                        <tbody class="addColor" id="addResults">
-                            <!--See code in template.getOverallScoresHTML() -->
 
-                            <!--HTML Validator did not like header above without td -->
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table>
-                        <tbody class="subtractColor" id="subtractResults">
-                            <!--See code in template.getOverallScoresHTML() -->
-                        </tbody>
-                    </table>
-                    <table>
-                        <tbody class="multiplyColor" id="multiplyResults">
-                            <!--See code in template.getOverallScoresHTML() -->
-                        </tbody>
-                    </table>
-                    <table>
-                        <tbody class="divideColor" id="divideResults">
-                            <!--See code in template.getOverallScoresHTML() -->
-                        </tbody>
-                    </table>
-                </div>
+                <table>
+                    <tbody class="addColor" id="addResults">
+                        <!--See code in template.getOverallScoresHTML() -->
+
+                        <!--HTML Validator did not like header above without td -->
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table>
+                    <tbody class="subtractColor" id="subtractResults">
+                        <!--See code in template.getOverallScoresHTML() -->
+                    </tbody>
+                </table>
+                <table>
+                    <tbody class="multiplyColor" id="multiplyResults">
+                        <!--See code in template.getOverallScoresHTML() -->
+                    </tbody>
+                </table>
+                <table>
+                    <tbody class="divideColor" id="divideResults">
+                        <!--See code in template.getOverallScoresHTML() -->
+                    </tbody>
+                </table>
             </div>  
 
             <!--This div is hidden except when user selects 'About' option-->        
             <div class="about hide" id="topicInfo">
-                <div>
-                    <h3>About math facts</h3>
-                    <p>Develop addition, subtraction, multiplication and division skills by practicing online. Students work at a variety of levels, either in 'Practice' mode or 'Timer' mode. Scores can be printed at the end of each session to track progress and review missed problems.</p><br>
-                    <h3>Why does speed matter?</h3>
-                    <p>The ability to instantly recall math facts enables students to learn more advanced math with greater ease. For example, the word problem "how many ounces of milk are in six 8-ounce glasses?" can be solved quickly by a student who recalls the math fact 6 x 8 = 48. The same problem can be time-consuming and frustrating for a student who does not yet know that math fact. 
-                        <span>Practice improves speed, speed improves success, and success boosts confidence and enthusiasm for math!</span>
-                    </p><br>
-                    <h3>Immediate feedback for students</h3>
-                    <p>'Practice' mode provides prompt feedback by identifying each correct and incorrect answer immediately. The 'Timer' mode provides results AFTER each 1 minute timed test.</p><br>
-                    <h3>View or print scores</h3>
-                    <p>The 'Scores' option at the bottom of the page lists scores for the student's current session and provides details on any missed problems. Students can print the information by clicking on the printer icon at the top of the 'Scores' page. (Some browsers such as Google Chrome also have an option to save results to a PDF file.)</p><br>
-                    <h3>Do you have ideas for improvement?</h3>
-                    <p>Feedback from students, teachers and parents is welcome. Please send suggestions for improvement and/or details about any problems you encounter to dianezev@comcast.net. Questions are also welcome!</p><br>
-                    <h3>Developer input</h3>
-                    <p>Developer contributions and suggestions for improvement are welcome. This project is posted on <a target="_blank"  href="https://github.com/dianezev/mathfacts">Github.</a></p><br>
-                    <h3>by Diane Zevenbergen</h3>
-                    <ol>
-                        <li>email: dianezev@comcast.net</li>
-                        <li>
-                            LinkedIn: <a target="_blank" href="https://www.linkedin.com/in/dianezev">https://www.linkedin.com/in/dianezev</a>
-                        </li>
-                    </ol>
-                </div>
+                    <li id="aboutGen">
+                        <a href="#"><span class= "pointRight"><i class="fa fa-chevron-right addColor"></i></span><span class= "pointDown hide"><i class="fa fa-chevron-down addColor"></i></span> Purpose</a>
+                        <p class="hide">Work online to improve speed and accuracy in addition, subtraction, multiplication and division. Print scores at the end of each session to track progress and review missed problems. Work at a variety of levels, either in <span class="chalk"><i class="fa fa-pencil-square-o fa-fw"></i>Practice</span> mode or <span class="chalk"><i class="fa fa-hourglass-o fa-fw"></i>Timer</span> mode. </p>
+                    </li>
+                    <li id="aboutSpeed">
+                        <a href="#"><span class= "pointRight"><i class="fa fa-chevron-right subtractColor"></i></span><span class= "pointDown hide"><i class="fa fa-chevron-down subtractColor"></i></span> Why does speed matter?</a>
+                        <p class="hide">The ability to instantly recall math facts enables students to learn more advanced math with greater ease. For example, the word problem "how many ounces of milk are in six 8-ounce glasses?" can be solved quickly by a student who recalls the math fact 6 x 8 = 48. The same problem can be time-consuming and frustrating for a student who does not yet know that math fact. 
+                        <span class="divideColor">Practice improves speed, speed improves success, and success boosts confidence and enthusiasm for math!</span></p>
+                    </li>
+                    <li id="aboutFeed">
+                        <a href="#"><span class= "pointRight"><i class="fa fa-chevron-right multiplyColor"></i></span><span class= "pointDown hide"><i class="fa fa-chevron-down multiplyColor"></i></span> What kind of feedback is provided?</a>
+                        <p class="hide"><span class="chalk"><i class="fa fa-pencil-square-o fa-fw"></i>Practice</span> mode provides prompt feedback by identifying each correct and incorrect answer immediately. The <span class="chalk"><i class="fa fa-hourglass-o fa-fw"></i>Timer</span> mode provides results AFTER each 1 minute timed test.</p>
+                    </li>
+                    <li id ="aboutScores">
+                        <a href="#"><span class= "pointRight"><i class="fa fa-chevron-right divideColor"></i></span><span class= "pointDown hide"><i class="fa fa-chevron-down divideColor"></i></span> How are scores summarized?</a>
+                        <p class="hide">The <span class="chalk"><i class="fa fa-file-text fa-fw"></i>Scores</span> option lists scores for a student's current session and provides details on any missed problems. Students can print the information by clicking on the printer icon at the top of the 'Scores' page. (Some browsers such as Google Chrome also have an option to save results to a PDF file.)</p>
+                    </li>
+                    <li id="aboutIdeas">
+                        <a href="#"><span class= "pointRight"><i class="fa fa-chevron-right addColor"></i></span><span class= "pointDown hide"><i class="fa fa-chevron-down addColor"></i></span> Who to contact with ideas for improvement...</a>
+                        <p class="hide">Feedback from students, teachers and parents is welcome. Please send suggestions for improvement and/or details about any problems you encounter to <span class="chalk">dianezev@comcast.net</span>. Questions are also welcome!</p>
+                    </li>
+                    <li id = "aboutDevel">
+                        <a href="#"><span class= "pointRight"><i class="fa fa-chevron-right subtractColor"></i></span><span class= "pointDown hide"><i class="fa fa-chevron-down subtractColor"></i></span> For developers who would like to contribute...</a>
+                        <p class="hide">Developer contributions and suggestions for improvement are welcome. This project is posted on <a target="_blank"  href="https://github.com/dianezev/mathfacts">Github.</a></p>
+                    </li>
+                    <li id="aboutContacts">
+                    <a href="#"><span class= "pointRight"><i class="fa fa-chevron-right multiplyColor"></i></span><span class= "pointDown hide"><i class="fa fa-chevron-down multiplyColor"></i></span> Contact developer...</a>
+                        <p class="hide">email: <span class="chalk">dianezev@comcast.net</span>
+                        <br>LinkedIn: <a target="_blank" href="https://www.linkedin.com/in/dianezev">https://www.linkedin.com/in/dianezev</a></p>
+                    </li>
             </div>    
 
-            <!-- footer menu options -->
-            <div class="footer chalk">
-                <nav>
-                    <ul>
-                        <li id="resumePractice" class="activeFooter">
-                            <a href="#">
-                                <i class="fa fa-pencil-square-o fa-fw"></i>Practice
-                            </a>
-                        </li>
-                        <li id="controlTimer">
-                            <a href="#">
-                                <i class="fa fa-hourglass-o fa-fw"></i>Timer
-                            </a>
-                        </li>
-                        <li id="goToScores">
-                            <a href="#">
-                                <i class="fa fa-file-text fa-fw"></i>Scores
-                            </a>
-                        </li>
-                        <li id="goToAbout">
-                            <a href="#">
-                                <i class="fa fa-info fa-fw"></i>About
-                            </a>
-                        </li>                
-                    </ul>
-                </nav>
-            </div>        
-        </div>     
+            <div class="credit">
+                <small class="cf">
+                    <span id="copyright" class="autoCenter"></span>
+                </small>
+            </div>    
 
-        <!-- credits display under chalkboard div -->
-        <div class="credit">
-            <small class="cf">
-                <span id="copyright" class="autoCenter"></span>
-            </small>
-        </div>    
+        </div>          
     </div>
 </div>
 
@@ -303,23 +333,24 @@
     <button type="button" id="continueTest">No, continue test</button>
 </div>
 
-<!-- This div hidden except when countdown needed to start a timed test-->
+<!-- This div used for 3 second count down for a timed test-->
 <div class="countdown cf hide" id="topicCountdown">
     <h2>Timed test is about to begin...</h2>
     <h1 id="seconds">(num seconds here)</h1>
 </div>
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <script src="js/helpers/helpers.js"></script>
-    <script src="js/templates/template.js"></script>
-    <script src="js/model/model.js"></script>
-    <script src="js/model/timer.js"></script>
-    <script src="js/view/view.js"></script>
-    <script src="js/controller/controller.js"></script>
-    <script src="js/script.js"></script>
-    <script src="js/events/events.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="js/helpers/helpers.js"></script>
+<script src="js/templates/template.js"></script>
+<script src="js/model/model.js"></script>
+<script src="js/model/timer.js"></script>
+<script src="js/view/view.js"></script>
+<script src="js/controller/controller.js"></script>
+<script src="js/script.js"></script>
+<script src="js/events/events.js"></script>
+
 </body>
 </html>

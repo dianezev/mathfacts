@@ -10,6 +10,9 @@ FMF.controller = (function() {
 
     var publicAPI = {
 
+        handleAboutClick: function(id) {
+            view.toggleAbout(id);
+        },
         handleAnswer: function(numPick) {
             var problemIndex = model.problemIndex;
             var problemSet = model.problemSet;
@@ -19,13 +22,39 @@ FMF.controller = (function() {
             var isTimed = model.isTimed;
             var liveAnswer = '#answer' + view.liveIndex;
             var answer;
+            
+            /*
+             * The answer region is set up in one of two ways
+             * depending on screen width (see MIN_PX_FOR_KEYBOARD in view):
+             * 1) With <input> tags so that users can use keyboard OR
+             * onscreen numeric buttons to  enter answers
+             *      OR
+             * 2) With <p> tags so that users CANNOT use keyboard -
+             * they can only use onscreen numeric buttons to enter answers
+             * 
+             * (This is a workaround to prevent virual keyboard popup
+             * on med & smaller screens)
+             */
+            
+            // If <input> tag in use with keyboard, handle this way
+            if (view.useInputTags) {
+            
+                // If argument passed, assign value to current problem
+                if (typeof(numPick) !== 'undefined') {
+                    $('.live').val(numPick);
+                }
+                answer = parseFloat($(liveAnswer).val());
 
-            // If argument passed, assign value to current problem
-            if (typeof(numPick) !== 'undefined') {
-                $('.live').val(numPick);
+            // Otherwise, handle with <p> tag (no keyboard)
+            } else {
+
+                // If argument passed, assign value to current problem
+                if (typeof(numPick) !== 'undefined') {
+                    $('.live').text(numPick);
+                }
+                answer = parseFloat($('.live').text());
             }
-            answer = parseFloat($(liveAnswer).val());
-
+            
             // If no answer, don't proceed with check
             if (isNaN(answer)) {
                 $(liveAnswer).focus();
@@ -37,37 +66,44 @@ FMF.controller = (function() {
             }
         },
         handleBodyClick: function() {
-            /*
-             * Force focus to live problem only if
-             * these conditions are met:
-             *  1) #chalkboard does not have class 'hide'
-             *  2) #topicMathFacts does not have class 'hide'
-             *  3) #cover does not have class 'bringToFront'
-             *  4) #cover does not have class 'coverAll'
-             */
-            if ((!($('#chalkboard').hasClass('hide')))&&
-                    (!($('#topicMathFacts').hasClass('hide')))&&
-                    (!($('#cover').hasClass('bringToFront')))&&
-                    (!($('#cover').hasClass('coverAll')))) {
-                $('#answer' + view.liveIndex).focus();
-
-            // Otherwise, if start screen is visible, set focus to user name
-            } else if ($('#userName').is(':visible')) {
-                $('#userName').focus();
-            }
+            view.revertFocus();
         },
         handleBtnHover: function(numPick) {
-            $('.live').val(numPick);
+
+            if (view.useInputTags) {
+                $('.live').val(numPick);
+            } else {
+                $('.live').text(numPick);
+            }
             $('.live').select();
             hoverInput = true;
         },
-        handleChangeLevel: function(levelIndex)  {
-            model.getProblemArray(levelIndex);
-            view.displayNextSet(false);
-            view.setHighlight(false);
+        handleChangeLevel: function(levelIndex, level)  {
+                        
+            // Adjust problem set if user CHANGED the level
+            if (!($(level).hasClass('active'))) {
+                $('#levelMenu li').removeClass('active');
+                $(level).addClass('active');
+                model.getProblemArray(levelIndex);
+                view.displayNextSet(false);
+                view.setHighlight(false);
+            }
+            
+            // Adjust display to math problems, if needed
+            if ($('#topicMathFacts').hasClass('hide')) {
+                view.switchContent('resumePractice');
+            }
+            
+            // Highlight sidebar selection (to Practice if needed)
+            view.highlightSidebar('resumePractice');
         },
         handleClearHover: function() {
-            $('.live').val('');
+            if (view.useInputTags) {
+                $('.live').val('');
+            } else {
+                $('.live').text('?');
+            }
+            
             hoverInput = false;
         },
         handleConfirm: function(isOKtoCancel) {
@@ -96,6 +132,7 @@ FMF.controller = (function() {
                 view.displayNextSet(true);
                 view.setHighlight(false);
                 view.setTracker(true);
+                view.highlightSidebar(lastOption);
                 view.switchContent(lastOption);
             } else {
 
@@ -110,7 +147,7 @@ FMF.controller = (function() {
                 }
             }
         },
-        handleFooterClick: function(id) {
+        handleSidebarClick: function(id) {
             var isTimed = model.isTimed;
             lastOption = id;
 
@@ -128,6 +165,7 @@ FMF.controller = (function() {
 
             // Otherwise go to topic selected by user
             } else {
+                view.highlightSidebar(id);
                 view.switchContent(id);
             }
         },
@@ -145,12 +183,15 @@ FMF.controller = (function() {
                 view.checkMarks(false);
             }
 
-            // Unhide math facts portion of page (if needed)
+            /*
+             * Unhide math facts portion of page 
+             * (needed if user is leaving 'About' or 'Scores')
+             */
             view.showTopic('#topicMathFacts');
             
-            // Set active footer option to 'Practice'
-            $('.footer li').removeClass('activeFooter');
-            $('.footer li:first').addClass('activeFooter');            
+            // Set active sidebar option to 'Practice'
+            $('.sidebar li').removeClass('activeSidebar');
+            $('.sidebar li:first').addClass('activeSidebar');            
         },
         handlePrintResults: function() {
             window.print();
@@ -164,6 +205,7 @@ FMF.controller = (function() {
             view.displayNextSet(false);
             view.setHighlight(true);
             view.showTopic('#topicMathFacts');
+            view.setTopMargin();
         },
         handleTestResults: function() {
             

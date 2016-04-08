@@ -125,6 +125,7 @@ FMF.model = (function() {
 
             // Clear timer & interval that adjusts hourglass display
             window.clearTimeout(testTimer);
+            window.clearInterval(hourglassTimer);
             this.isTimed = false;
 
             $('#testMsg').addClass('hide');
@@ -228,17 +229,21 @@ FMF.model = (function() {
                      */
                     if ((correct === attempted) &&
                             (correct >= SUGGEST_GOAL[model.diff])) {
-                        msg = 'Excellent, ' + model.user +
-                              '! You should try the next level.';
+                        if (model.user === '') {
+                            msg = 'Excellent! You should try the next level.';
+                        } else {
+                            msg = 'Excellent, ' + model.user +
+                                '! You should try the next level.';
+                        }
                         $('#test_moveUp').empty().append(msg);
                     } else {
                         $('#test_moveUp').empty();
                     }
                 }
 
-                // Change footer highlight to 'practice'
-                $('.footer li').removeClass('activeFooter');
-                $('#resumePractice').addClass('activeFooter');
+                // Change sidebar highlight to 'practice'
+                $('.sidebar li').removeClass('activeSidebar');
+                $('#resumePractice').addClass('activeSidebar');
                 myThis.cancelTimer();
                 makeBubbles(correct, 70, '2s');
             }

@@ -1,0 +1,195 @@
+/****************************
+*****************************
+Small Screen Size Layout
+*****************************
+****************************/
+.backdrop {
+    width: 84%;
+}
+.sidebar {
+    width: 8%;
+}
+.frameApp {
+    margin-top: 1px;
+    max-width: 775px;
+    min-width: 568px;
+    max-height: 100vmin;
+    overflow: visible;
+    width: 100%
+}
+.sidebar {
+    min-width: 12px;
+    padding-top: 25vmin;
+}
+.sidebar a {
+    display: block;
+    text-align: center;
+}
+.sidebar label {
+    display: none;
+}
+.sidebar li {
+    margin-right: 4%;
+    text-align: left;
+    margin-bottom: 8vmin;
+}
+.sidebar li > a > i {
+    margin-left: 12%;
+    display: flex;
+    font-size: 7vmin; 
+    vertical-align: middle;
+}
+.sidebar li > a > i > span.chevron > i {
+    display: inline;
+    font-size: .4em; 
+    vertical-align: middle;
+}
+.sidebar nav {
+    margin-left: 0;
+}
+.sidebar li > a > label > span.chevron i {
+    display: none;
+}
+.backdrop {
+    min-height: 320px;
+}
+nav.subLevels {
+    width: 100%;
+}
+.allNumbers {
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.submenu {
+    font-size: 3.5vmin;
+    height: 8vmin;
+}
+.menu {
+    font-size: 20vmin;
+}
+.whiteboard {
+    font-size: 7vmin;
+    margin: 2vmin auto auto auto;
+}
+.btn {
+    font-size: 1.2em;
+}
+.top_el {
+    margin-bottom: -5%;
+}
+.answer_region {
+    margin-bottom: 4vmin;
+}
+.backgroundImg {
+    padding-top: 0;
+}
+.start2 h1 span {
+   margin: 0;
+}
+.start2 h3 {
+    margin: 1em auto .2em auto;
+}
+.start2 {
+    font-size: 120%;
+}
+.start2 input {
+    font-size: 180%;
+}
+.start2 input, .start2 button {
+    padding: .1em;
+}
+.start2 button {
+    font-size: 400%;
+    height: 1.4em;
+}
+.credit {
+    font-size: 11px;
+}
+.page {
+    padding: 0 0 1.2em 0;
+}
+.answer_region, .problem {
+    margin-left: 1.5%;
+    margin-right:1.5%;
+    width: 17%;
+}
+.answer_region input.live {
+    border: 3px solid;
+    padding-right: 5px;
+}
+.track {
+    font-size: 75%;
+}
+.getStarted h1 {
+    font-size: 15vmin;
+}
+.getStarted {
+    width: 85%;
+    max-width: 800px;
+}
+.getStarted h6 {
+    font-size: 100%;
+}
+.about li {
+    font-size: 1.2em;
+    margin: .2em auto;
+    padding-top: .3em;
+    padding-bottom: .3em;
+}
+.about p {
+    font-size: 12px;
+}
+.timeHeader h2 {
+    font-size: 4vmin;
+}
+.timeHeader {
+    height: 25vmin;
+}
+.timerOn i {
+    font-size: 15vmin;
+    margin: 4vmin 4vmin;
+}
+.getStarted {
+    margin: 3% auto auto auto;
+}
+.operator {text-align: center; }
+.countdown h2, .confirm h2 { font-size: 100%; }
+.test button, .confirm button {
+    font-size: 75%;
+}
+.test h3, .test h2 {
+    font-size: 100%;
+}
+.test h4, .confirm h4 {
+    font-size: 7vmin;
+}
+.scores {
+    font-size: 0.8em;
+}
+.scores table {
+    overflow: visible;
+}
+.scores td {
+    color: white;
+}
+.scores td:nth-child(1) {
+    font-size: 100%;
+    width: 24%;
+}
+.scores td:nth-child(2) { 
+    width: 14%;
+}
+.scores td:nth-child(3) {
+    width: 26%;
+}
+.scores td:nth-child(4) {
+    width: 36%;
+}
+.about {
+    font-size: 4vmin;
+    padding: 0 1em 1em 1em;
+}
+td {
+    padding: 0.1rem .2rem;
+}

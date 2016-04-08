@@ -3,6 +3,15 @@ FMF = window.FMF || {};
 FMF.view = (function() {
     'use strict';   
 
+    /*
+     * Do not allow keyboard entry for smaller screens, except
+     * in the startup screen.  This helps avoid
+     * problems with the soft keyboard popping up which blocks
+     * the view of the app when focus is on input fields (in answer region).
+     * The min pixel size stated here is used to determine whether <input> tags
+     * or <p> tags are used in answer region (see template.getAnswersHTML)
+     */
+    var MIN_PX_FOR_KEYBOARD = 1400;
     var model = FMF.model;
     var template = FMF.template;
     var helpers = FMF.helpers;
@@ -10,7 +19,6 @@ FMF.view = (function() {
     var buttonsPerRow = 10;
     var buttonRows = 3;
     var countdownTimer = -1;
-    var introTimer = -1;
     var perPage = model.perPage;
     var totalButtons = buttonRows * buttonsPerRow;
     
@@ -18,7 +26,10 @@ FMF.view = (function() {
         buttonsPerRow: 10,
         rows: 3,
         dateInfo: helpers.dateInfo(),
+        errorPause: false,
+        useInputTags: true,
         liveIndex: 1,
+        maxWidth: $('.frameApp').css('max-width'),
         trapDblClick: false,
         checkMarks: function(turnOn) {
 
@@ -62,7 +73,11 @@ FMF.view = (function() {
             this.checkMarks(false);
             
             // Clear all answers
-            $('[id^="answer"]').val('');
+            if (this.useInputTags) {
+                $('[id^="answer"]').val('');
+            } else {
+                $('[id^="answer"]').text('?');
+            }
 
             // Display new problems
             for (var i = 1, l = perPage; i <= l ; i +=1) {
@@ -73,6 +88,30 @@ FMF.view = (function() {
 
             // Hide edit fields (made visible one at a time in setHighlight)
             $('[id^="answer"]').addClass('invisible');
+        },
+        revertFocus: function() {
+            /*
+             * Force focus to live problem only if
+             * these conditions are met:
+             *  1) #chalkboard does not have class 'hide'
+             *  2) #topicMathFacts does not have class 'hide'
+             *  3) #cover does not have class 'bringToFront'
+             *  4) #cover does not have class 'coverAll'
+             */
+            if ((!($('#chalkboard').hasClass('hide')))&&
+                    (!($('#topicMathFacts').hasClass('hide')))&&
+                    (!($('#cover').hasClass('bringToFront')))&&
+                    (!($('#cover').hasClass('coverAll')))) {
+                if (this.useInputTags) {
+                    $('#answer' + this.liveIndex).focus();
+                } else {
+                    $(':focus').blur();
+                }
+                
+            // Otherwise, if start screen is visible, set focus to user name
+            } else if ($('#userName').is(':visible')) {
+                $('#userName').focus();
+            }
         },
         nextProblem: function (answer, correctAns, isTimed) {
             var liveIndex = this.liveIndex;
@@ -87,6 +126,9 @@ FMF.view = (function() {
                     (answer !== correctAns) &&
                     (!isTimed)) {
 
+                // Set flag to true (use to ignore keydown during pause)
+                myThis.errorPause = true;
+                
                 // Bring overlay to front while highlighting error
                 $('#cover').addClass('bringToFront');
 
@@ -119,6 +161,7 @@ FMF.view = (function() {
                 }
 
                 myThis.setHighlight(false);
+                myThis.errorPause = false;
             }
         },
         setFtrsHdrs: function () {
@@ -135,10 +178,23 @@ FMF.view = (function() {
             $("#trackScore").html("+" + model.tScore);
             $('.getStarted').addClass('hide');
             $('#chalkboard').removeClass('hide');
-            $('#answer1').focus();
+
+            if (this.useInputTags) {
+                $('#answer1').focus();
+            } else {
+                $(':focus').blur();
+            }
 
             // Adds html for general info in scores output
             function updateResultsHdrs(dateInfo) {
+                var userMsg;
+                
+                if (user === '') {
+                    userMsg = 'Timed results';
+                } else {
+                    userMsg = 'Timed results for ' +user;
+                }
+                
                 $("#scores_date").text(dateInfo);
                 $("#scores_numRange").html('Number range: ' +
                         'Level ' + (model.diff + 1) + ', ' +
@@ -146,8 +202,7 @@ FMF.view = (function() {
                         model.numRange[model.numRange.length - 1]);
 
                 if (typeof(user) !== 'undefined') {
-                    $('#test_user').empty().append('Timed results for ' +
-                            user);
+                    $('#test_user').empty().append(userMsg);
                     $('#scores_user').text('Name: ' + user);
                 }
             }
@@ -167,7 +222,12 @@ FMF.view = (function() {
             $('[id^="answer"]').removeClass('live');
             $(liveAnswer).addClass('live');
             $(liveAnswer).removeClass('invisible');
-            $(liveAnswer).focus();
+            
+            if (this.useInputTags) {
+                $(liveAnswer).focus();
+            } else {
+                $(':focus').blur();
+            }
 
             /*
              * For all multiplication problems, or for FIRST of new problem
@@ -212,9 +272,36 @@ FMF.view = (function() {
                 return start;
             }
         },
+        setTopMargin: function () {
+// TBD: Consider calling something similar from handleStart, but revise to key off vmin
+// so that portrait<-->landscape rotation doesn't get weird
+//            var frameHt = $('#chalkboard').height();
+//            var availHt = $('body').height();
+//            var topMargin = .5 * (availHt - frameHt);
+//            $("#columnTwo").height($("#columnOne").height());
+//            
+//            $('#chalkboard').css('margin-top', topMargin);
+        },
         setupHTML: function(start) {
+            
+            /*
+             * Note that template will create the HTML for answer region in
+             * one of two ways, depending on available screen width.
+             * If screen width >= MIN_PX_FOR_KEYBOARD, it will use 
+             * <input> tags which allow user to either type answers or
+             * click numeric buttons. Otherwise, it uses <p> tags
+             * and the user can only use the numeric buttons.
+             * This is a crude solution that prevents the virtual
+             * keyboard from popping up and obscuring app on phones & tablets.
+             */
+            if (window.screen.width >= MIN_PX_FOR_KEYBOARD) {
+                this.useInputTags = true;
+            } else {
+                this.useInputTags = false;
+            }
+            
             $('#problems').html(template.getProblemsHTML(perPage));
-            $('#solutions').html(template.getAnswersHTML(perPage));
+            $('#solutions').html(template.getAnswersHTML(perPage, this.useInputTags));
             $('#allButtons').html(template.getButtonsHTML(start, buttonRows, buttonsPerRow));
         },
         setTracker: function(makeVisible) {
@@ -230,7 +317,6 @@ FMF.view = (function() {
             var percent;
             var scoreText = '';
             var results = model.results;
-            var scoresHTML = '';
 
             updateScores('Add','#addResults', '+',all, results.add);
             updateScores('Subtract','#subtractResults', '-',all, results.subtract);
@@ -249,51 +335,31 @@ FMF.view = (function() {
 
             $('#scores_overall').text(scoreText);
             
+            // If no results, append message
+            if (all[1] === 0) {
+                $('#addResults').empty().append('<td class="chalk">No problems have been completed yet.</td>');
+            }
+
             /*
              * Loops through practice & timed results for all levels
              * for a given operator 
              * and appends the results to the 'id' selector
              */
             function updateScores(title, id, operator, all, results) {
+                var scoresHTML;
                 scoresHTML = template.getOverallScoresHTML(title, id, operator, all, results);
 
-                // Update results for given operator (all levels)
-                $(id).empty().append(scoresHTML);
-
+                // If any template data returned, append
+                if (scoresHTML !== '') {
+                    
+                    // Update results for given operator (all levels)
+                    $(id).empty().append(scoresHTML);
+                }
             }
         },
         showStartScreen: function() {
-            var i = 1;
-
-            // Run animation for start screens
-            introTimer = window.setInterval(function(){ 
-                showNextOp(++i); 
-            }, 400);
-
             $('body').show();            
-
-            // Function shows next operator symbol/text in start screen
-            function showNextOp(num) {
-
-                // Display operators briefly in first start screen
-                if (num <= 4) {
-                    $('.start1:nth-child(' + num + ')').removeClass('hide');
-                    $('.start1:nth-child(' + num + ') p:nth-child(1)').addClass('rotateThisFadeOut');
-                    $('.start1:nth-child(' + num + ') p:nth-child(2)').addClass('slideFromRightFadeOut');
-
-                /*
-                 * Next, hide 1st start screen & display 2nd,
-                 * prompting user for name/level
-                 */
-                } else if (num === 11) {
-                    $('.start1').addClass('hide');
-                    $('.start2').removeClass('hide');
-                    $('.start2:first').addClass('startOptions');
-                    $('.start2:last').addClass('startOptions');
-                    $('#userName' ).focus();
-                    window.clearInterval(introTimer);
-                }
-            }        
+            $('#userName' ).focus();
         },
         showTopic: function(hash) {
 
@@ -303,12 +369,18 @@ FMF.view = (function() {
                 $(hash).removeClass('hide');
             }
         },
+        highlightSidebar: function(id) {
+            var activeItem = '#' + id;
+            
+            // Change highlight if not already set to current selection
+            if (!($(activeItem).hasClass('activeSidebar'))) {
+                $('.sidebar li').removeClass('activeSidebar');
+                $(activeItem).addClass('activeSidebar');
+            }
+        },
         switchContent: function(id) {
             var i;
             var myThis = this;
-
-            $('.footer li').removeClass('activeFooter');
-            $('#' + id).addClass('activeFooter');
 
             if (id === 'controlTimer') {
                 i = 2;
@@ -359,6 +431,28 @@ FMF.view = (function() {
                     this.showScores();
                     this.showTopic('#topicMyScores');
                 }
+            }
+        },
+        toggleAbout: function(id) {
+
+            // Toggle between displaying/hiding <p> element in a <li>
+            if ($('#' + id + ' p').hasClass('hide')) {
+                
+                // First hide <p> for all <li> & set pointer to RIGHT
+                $('.about p').addClass('hide');
+                $('.about a span.pointDown').addClass('hide');
+                $('.about a span.pointRight').removeClass('hide');
+                
+                // Next disply <p> for selected <li> and set pointer to DOWN
+                $('#' + id + ' p').removeClass('hide'); 
+                $('#' + id + ' a span.pointRight').addClass('hide');
+                $('#' + id + ' a span.pointDown').removeClass('hide');
+                
+            // Otherwise collapse the <p> element & reset pointer to RIGHT
+            } else {
+                $('#' + id + ' p').addClass('hide');
+                $('span.pointDown').addClass('hide');
+                $('#' + id + ' a span.pointRight').removeClass('hide');
             }
         }
     };

@@ -1,0 +1,190 @@
+/****************************
+*****************************
+Medium Screen Size Layout
+*****************************
+****************************/
+.backdrop {
+    width: 76%;
+}
+.sidebar {
+    width: 12%;
+}
+.frameApp {
+    margin-top: 5vh;
+    max-width: 1049px;
+    min-width: 400px;
+    width: 100%
+}
+.sidebar {
+    min-width: 60px;
+    padding-top: 30vh;
+}
+.sidebar a {
+    display: block;
+    text-align: left;
+}
+.sidebar label {
+    margin-top: 3px;
+    display: flex;
+    width: 100%;
+    font-size: 80%;
+    text-align: left;
+}
+.sidebar li {
+    margin-right: 4%;
+    margin-left: 15%;
+    text-align: left;
+    margin-bottom: 5vh;
+}
+.sidebar li > a > i {
+    display: flex;
+    font-size: 7vh; 
+    vertical-align: middle;
+}
+.sidebar li > a > i > span.chevron > i {
+    display: none;
+}
+.sidebar nav {
+    margin-left: 0;
+}
+.sidebar li > a > label > span.chevron i {
+    font-size: 100%;
+    display: inline;
+}
+.backdrop {
+    min-height: 650px;
+}
+nav.subLevels {
+    width: 100%;
+}
+.allNumbers {
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.submenu {
+    font-size: 3.5vh;
+    height: 6vh;
+}
+.menu {
+    font-size: 30vh;
+}
+.whiteboard {
+    font-size: 7vh;
+    margin: 2vh auto auto auto;
+}
+.btn {
+    font-size: 4vh;
+}
+.top_el {
+    margin-bottom: -5%;
+}
+.answer_region {
+    margin-bottom: 4vh;
+}
+.backgroundImg {
+    padding-top: 0;
+}
+.start2 h1 span {
+   margin: 0;
+}
+.start2 h3 {
+    margin: 1em auto .2em auto;
+}
+.start2 {
+    font-size: 120%;
+}
+.start2 input {
+    font-size: 180%;
+}
+.start2 input, .start2 button {
+    padding: .1em;
+}
+.start2 button {
+    font-size: 500%;
+    height: 1.5em;
+}
+.credit {
+    font-size: 12px;
+}
+.page {
+    padding: 0 0 1.2em 0;
+}
+.answer_region, .problem {
+    margin-left: 1.5%;
+    margin-right:1.5%;
+    width: 17%;
+}
+.answer_region input.live {
+    border: 3px solid;
+    padding-right: 5px;
+}
+.track {
+    font-size: 100%;
+}
+.getStarted h1 {
+    font-size: 20vh;
+}
+.getStarted {
+    width: 85%;
+    max-width: 800px;
+}
+.getStarted h6 {
+    font-size: 100%;
+}
+.about li {
+    font-size: 1.5em;
+    margin: .3em auto;
+    padding-top: .3em;
+    padding-bottom: .3em;
+}
+.about p {
+    font-size: 15px;
+}
+.timeHeader h2 {
+    font-size: 4vh;
+}
+.timeHeader {
+    height: 30vh;
+}
+.timerOn i {
+    font-size: 20vh;
+    margin: 5vh 5vh;
+}
+.getStarted {
+    margin: 10% auto auto auto;
+}
+.operator {text-align: center; }
+.countdown h2, .confirm h2 { font-size: 200%; }
+.test button, .confirm button {
+    font-size: 150%;
+}
+.test h3, .test h2 {
+    font-size: 150%;
+}
+.test h4, .confirm h4 {
+    font-size: 20px;
+}
+.scores {
+    font-size: 2.2vmin;
+}
+.scores td:nth-child(1) { 
+    font-size: 100%;
+    width: 24%;
+}
+.scores td:nth-child(2) { 
+    width: 14%;
+}
+.scores td:nth-child(3) {
+    width: 28%;
+}
+.scores td:nth-child(4) {
+    width: 34%;
+}
+.about {
+    font-size: 16px;
+    padding: 2em 1em 1em 1em;
+}
+td {
+    padding: 0.1rem .7rem;
+}

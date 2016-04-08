@@ -3,13 +3,7 @@
 // Change level & active submenu item when clicked
 $('#levelMenu').on('click', 'li', function(e) {
     var levels = $('#levelMenu li');
-
-    // Remove/add class on levelMenu item, based on user's selection
-    if (!($(this).hasClass('active'))) {
-        $('#levelMenu li').removeClass('active');
-        $(this).addClass('active');
-        FMF.controller.handleChangeLevel(levels.index(this));
-    }
+    FMF.controller.handleChangeLevel(levels.index(this), this);
     e.preventDefault();
 });
 
@@ -54,11 +48,15 @@ $('#stopTest').on('click', function() {
     FMF.controller.handleConfirm(true);
 });
 
-// Footer options: Practice/Timer/Scores/About
-$('.footer li').on('click', function() {
-    FMF.controller.handleFooterClick(this.id);
+// Sidebar options: Practice/Timer/Scores/About
+$('.sidebar li').on('click', function() {
+    FMF.controller.handleSidebarClick(this.id);
 });
 
+// 'About' information details
+$('.about li').on('click', function() {
+    FMF.controller.handleAboutClick(this.id);
+});
 
 /*
  * When user hovers over button, display # in answer field.
@@ -66,12 +64,15 @@ $('.footer li').on('click', function() {
  * This makes it simpler for user to run mouse over buttons and
  * view result in the answer field.
  */
-$('.btn').hover(function() {
+$('#allButtons').on({
+    mouseenter: function () {
         FMF.controller.handleBtnHover($(this).text());
     },
-        FMF.controller.handleClearHover
-);
-
+    mouseleave: function () {
+        FMF.controller.handleClearHover();
+    }
+}, 'button'); 
+    
 /*
  * If user presses enter, tab or right arrow, handleAnswer.
  * Otherwise, verify that user's entry is numeric.
@@ -96,5 +97,34 @@ $('#solutions').on('keydown', 'input', function(e) {
     } else if (!FMF.helpers.validateNumber(key)) {
         e.preventDefault();
     }    
+});
+$('body').on('keydown', function(e) {
+
+    /*
+     * Ignore keydown if a pause is in effect to
+     * highlight error on last displayed problem
+     */
+    if (FMF.view.errorPause) { return; }
+    
+    // If math problems are visible, restrict keys
+    if (!($('#chalkboard').hasClass('hide')) &&
+            !($('#topicMathFacts').hasClass('hide'))) {
+        var key = e.which;
+
+        // Prevent default for Tab
+        // DEPRECATED KEYCODE:   if (e.keyCode === 9 || e.which === 9) {
+        if (key === 9) {
+            e.preventDefault();
+        }
+
+        // For Enter, Tab or Right Arrow, check answer
+        if (key === 13 || key === 9 || key === 39) {
+            FMF.controller.handleAnswer();
+
+        // Otherwise check that user entry is numeric
+        } else if (!FMF.helpers.validateNumber(key)) {
+            e.preventDefault();
+        }
+    }
 });
 //})();

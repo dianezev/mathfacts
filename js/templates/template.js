@@ -5,7 +5,7 @@ FMF.template = (function() {
     
     // Used to update numeric buttons
     var _tplButton = _.template('<div class="btn-group" role="group">' +
-                                    '<button type="button" class="btn btn-default"' +
+                                    '<button type="button" class="btn btn-default" ' +
                                             'value=<%= propVal %>><%= buttonVal %>' +
                                     '</button>' +
                                 '</div>');
@@ -31,11 +31,30 @@ FMF.template = (function() {
                                     '</div>' +
                                  '</div>');
     
-    // Used to set HTML for the answer region of problem set (excluding values)
-    var _tplAnswers = _.template('<div class="answer_region">' +
+    
+    /*
+     * Note that template will create the HTML for answer region in
+     * one of two ways, depending on available screen width.
+     * If screen width >= view.MIN_PX_FOR_KEYBOARD, it will use 
+     * <input> tags which allow user to either type answers or
+     * click numeric buttons. Otherwise, it uses <p> tags
+     * and the user can only use the numeric buttons.
+     * This is a crude solution that prevents the virtual
+     * keyboard from popping up and obscuring app on phones & tablets.
+     */
+
+    // Used to set HTML for the answer region of problem set using INPUT TAGS (excluding values)
+    var _tplAnswersWithInputTags = _.template('<div class="answer_region">' +
                                     '<input type="text" id="answer<%= probNum %>" ' + 
                                             'class="answerBox" maxlength=3 ' +
                                             'placeholder="?">' +
+                                    '<i class="fa fa-check"></i>' +
+                                 '</div>');
+    // Used to set HTML for the answer region of problem set using P TAGS (excluding values)
+    var _tplAnswersWithPTags = _.template('<div class="answer_region">' +
+                                    '<p id="answer<%= probNum %>" ' + 
+                                            'class="answerBox">?' +
+                                    '</p>' +
                                     '<i class="fa fa-check"></i>' +
                                  '</div>');
     
@@ -73,7 +92,7 @@ FMF.template = (function() {
 
     // Used to create submenu (changes depending on operator & Level 1, 2 or 3
     var _tplSubMenu = _.template('<li>' +
-                                    '<a href="#">&nbsp&nbsp<%= operator %><%= label %></a>' +
+                                    '<a href="#"><p><%= operator %><%= label %></p></a>' +
                                  '</li>');
 
         
@@ -102,12 +121,23 @@ FMF.template = (function() {
         getBubbleHTML: function () {
             return '<div class="blob"></div>';
         },
-        getAnswersHTML: function (perPage) {
+        getAnswersHTML: function (perPage, useInputTags) {
             var answersHTML = '';            
 
-            // This loop builds html for problem answers
-            for (var i = 1; i <= perPage; i++ ) {
-                answersHTML += _tplAnswers({probNum: i});
+            if (useInputTags) {
+
+                // This loop builds html for problem answers using <input> tags
+                for (var i = 1; i <= perPage; i++ ) {
+                    answersHTML += _tplAnswersWithInputTags({probNum: i});
+                }
+            
+            } else {
+
+                // This loop builds html for problem answers using <p> tags
+                for (var i = 1; i <= perPage; i++ ) {
+                    answersHTML += _tplAnswersWithPTags({probNum: i});
+                }
+            
             }
             
             return answersHTML;

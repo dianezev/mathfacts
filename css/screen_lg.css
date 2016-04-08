@@ -1,0 +1,185 @@
+/****************************
+*****************************
+Large Screen Size Layout
+*****************************
+****************************/
+.backdrop {
+    width: 60%;
+}
+.sidebar {
+    width: 20%;
+}
+.frameApp {
+    margin-top: 10vh;
+    max-width: 1400px;
+    min-width: 1050px;
+    width: 100%
+}
+.sidebar {
+    min-width: 220px;
+    padding-top: 200px;
+}
+.sidebar a {
+    display: inline;
+}
+.sidebar label {
+    font-size: 110%;
+    display: inline;
+}
+.sidebar li {
+    margin-right: 4%;
+    text-align: right;
+    margin-bottom: 30px;
+}
+.sidebar li > a > i {
+    width: 1em;
+    display: inline-flex;
+    font-size: 350%; 
+    vertical-align: middle;
+}
+.sidebar li > a > i > span.chevron > i {
+    display: none;
+}
+.sidebar nav {
+    margin-left: 0;
+}
+.sidebar li > a > label > span.chevron i {
+    font-size: 200%;
+    vertical-align: middle;
+}
+.backdrop {
+    min-height: 570px;
+}
+nav.subLevels {
+    width: 100%;
+}
+.allNumbers {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.submenu {
+    font-size: 20px;
+    height: 20px;
+}
+.menu {
+    font-size: 200px;
+}
+.whiteboard {
+    font-size: 300%;
+    margin: 0.6em auto auto auto;
+}
+.btn {
+    font-size: 25px;
+}
+.top_el {
+    margin-bottom: -10%;
+}
+.answer_region {
+    margin-bottom: .8em;
+}
+.backgroundImg {
+    padding-top: 0;
+}
+.start2 h1 span {
+    margin: 0;
+}
+.start2 h3 {
+    margin: 1.5em auto .3em auto;
+}
+.start2 {
+    font-size: 200%;
+}
+.start2 input {
+    font-size: 150%;
+}
+.start2 input, .start2 button {
+    padding: .2em;
+}
+.start2 button {
+    font-size: 400%;
+    height: 1.5em;
+}
+.credit {
+    font-size: 11px;
+}
+.page {
+    padding: 0 0 1.2em 0;
+}
+.answer_region, .problem {
+    margin-left: 3%;
+    margin-right:3%;
+    width: 14%;
+}
+.answer_region input.live, .answer_region p.live {
+    border: 3px solid;
+    padding-right: 5px;
+}
+.track {
+    font-size: 100%;
+}
+.getStarted h1 {
+    font-size: 700%;
+}
+.getStarted {
+    width: 80%;
+    max-width: 1100px;
+}
+.getStarted h6 {
+    font-size: 80%;
+}
+.about li {
+    font-size: 1.5em;
+    margin: .3em auto;
+    padding-top: .5em;
+    padding-bottom: .5em;
+}
+.about p {
+    font-size: 18px;
+}
+.timeHeader h2 {
+    font-size: 32px;
+}
+.timeHeader {
+    height: 185px;
+}
+.timerOn i {
+    font-size: 600%;
+}
+.getStarted {
+    margin: auto;
+}
+.operator {text-align: left; }
+
+.countdown h2, .confirm h2 { font-size: 200%; }
+.test button, .confirm button {
+    font-size: 150%;
+}
+.test h3, .test h2 {
+    font-size: 150%;
+}
+.test h4, .confirm h4 {
+    font-size: 20px;
+}
+.scores {
+    font-size: 15px;
+}
+.scores td:nth-child(1) { 
+    font-size: 125%;
+    width: 32%;
+}
+.scores td:nth-child(2) { 
+    width: 16%;
+}
+.scores td:nth-child(3) {
+    width: 23%;
+}
+.scores td:nth-child(4) {
+    width: 29%;
+}
+.about {
+    font-size: 16px;
+    padding: 2em 1em 1em 1em;
+}
+td {
+    padding: 0.1rem .7rem;
+}

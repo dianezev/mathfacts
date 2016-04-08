@@ -6,9 +6,9 @@
  * 
  * This is a work in progress. STILL TO BE DONE:
  *
- * 1. address browser differences, particularly Safari (currently works best in Chrome)
- * 2. make responsive for tablet/prevent pop-up keyboard when #s avail 
- * 3. make responsive for smartphone 
+ * 1. address browser differences
+ * 2. store JSON data in localStorage to track progress over time
+ * 3. store JSON data on server
  *
  */
 

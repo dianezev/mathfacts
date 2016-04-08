@@ -15,13 +15,6 @@
 @-o-keyframes
 @keyframes
 */
-/*
-  -webkit-transform
-  -moz-transform
-  -ms-transform ASK CAROLYN
-  -o-transform
-  transform
-*/
 @-webkit-keyframes roll {
     0%, 100% { -webkit-transform: rotate(-6deg); }
     50% { -webkit-transform: rotate(6deg); }
@@ -208,34 +201,23 @@
 2) Media/print Rules
 *******************************************************************
 ******************************************************************/
-/*
-TBD: from Chris Coyier CSS Tricks
-Incorporate when making app responsive
-body {
-  font-size: x-large;
-}
-@media (max-width: 1000px) {
-  body { font-size: large; }
-}
-@media (max-width: 500px) {
-  body { font-size: medium; }
-}
-*/
+
 @media print {
     tr, tr.newLevel { font-size: 11px; }
-    
+
     /*    Need to override overflow:auto to make multiple pages print*/
     .backgroundShade { overflow: visible; }
-    .forceScroll {
-        clear: both;
-        overflow: visible;
-        padding-right: 20px;
-        border-style: none;
-    }
-    .mainmenu, .footer, .printResults, .credit, .backgroundImg img, .track {
+    .backgroundImg { overflow: visible; }
+    .mainmenu, .subLevels .submenu, .sidebar, .printResults, .credit, .backgroundImg img, .track {
         display: none;
     }
-    .scores { display: block; }
+    nav.subLevels {
+        border-top-color: transparent;
+    }
+    .scores {
+        display: block;
+        margin-left: 30mm;
+    }
     .scores h3 { font-size:14px; }
     .scores h4 { font-size:12px; }
 /* TBD: this @page from http://www.smashingmagazine.com/2013/03/tips-and
