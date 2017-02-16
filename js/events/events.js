@@ -44,6 +44,7 @@ $('.getStarted button').on('click', function() {
 $('#closeConfirm, #continueTest').on('click', function() {
     FMF.controller.handleConfirm(false);
 });
+
 $('#stopTest').on('click', function() {
     FMF.controller.handleConfirm(true);
 });
@@ -98,6 +99,7 @@ $('#solutions').on('keydown', 'input', function(e) {
         e.preventDefault();
     }    
 });
+
 $('body').on('keydown', function(e) {
 
     /*

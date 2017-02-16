@@ -93,9 +93,7 @@ FMF.template = (function() {
     // Used to create submenu (changes depending on operator & Level 1, 2 or 3
     var _tplSubMenu = _.template('<li>' +
                                     '<a href="#"><p><%= operator %><%= label %></p></a>' +
-                                 '</li>');
-
-        
+                                 '</li>');      
   
     var publicAPI = {
         getButtonsHTML: function(start, rows, buttonsPerRow) {
