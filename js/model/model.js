@@ -93,31 +93,40 @@ FMF.model = (function() {
 
             this.opName = opName;
             
-            // Set label array for +. - and x
+            // Set label array for +, - and x
             lblArray = this.labelRange;
 
             /*
              * Depending on operator, get symbol (for display) and
              * operator (used in HTML)
              */
-            if (opName === 'add') {
-                operator = '+';
-                symbol = '+';
-            } else if (opName === 'subtract') {
-                operator = '-';
-                symbol = '-';
-            } else if (opName === 'multiply') {
-                operator = '&times;';
-                symbol = '\xD7';
-            } else if (opName === 'divide') {
-                operator = '&divide;';
-                symbol = '\xF7';
+            switch (opName) {
+                case 'add':
+                    operator = '+';
+                    symbol = '+';
+                    break;
+
+                case 'subtract':
+                    operator = '-';
+                    symbol = '-';
+                    break;
+
+                case 'multiply':
+                    operator = '&times;';
+                    symbol = '\xD7';
+                    break;
+
+                case 'divide':
+                    operator = '&divide;';
+                    symbol = '\xF7';
                 
-                // Use different label array for div (excludes 0)
-                lblArray = this.labelRangeDiv;
-            } else {
-                alert('Error: "' + opName + '" is not a valid option.');
-                return;
+                    // Use different label array for div (excludes 0)
+                    lblArray = this.labelRangeDiv;
+                    break;
+
+                default:
+                    alert('Error: "' + opName + '" is not a valid option.');
+                    return;
             }
             this.operator = operator;
 
@@ -129,50 +138,19 @@ FMF.model = (function() {
             function setColors() {
                 var idName = '#math_' + opName;
                 var className = opName + 'Color';
-
+                
                 // Remove any of the color classes before resetting
                 $('[id^="answer"]').removeClass('error');
-                if ($('.page').hasClass('addColor')) {
-                    $('.page').removeClass('addColor');
-                    $('.subLevels').removeClass('addColor');
-                } else if ($('.page').hasClass('subtractColor')) {
-                    $('.page').removeClass('subtractColor');
-                    $('.subLevels').removeClass('subtractColor');
-                } else if ($('.page').hasClass('multiplyColor')) {
-                    $('.page').removeClass('multiplyColor');
-                    $('.subLevels').removeClass('multiplyColor');
-                } else if ($('.page').hasClass('divideColor')) {
-                    $('.page').removeClass('divideColor');
-                    $('.subLevels').removeClass('divideColor');
-                }
+                $('.page').removeClassRegex(/Color$/);
+                $('.subLevels').removeClass(/Color$/);
 
-                /*
-                 * Set colors (yellow = wrong answer, blue = addition
-                 * red = subtraction, green = multiplication, purple = division)
-                 */
-                if (operator === '+') {
-                    $('.page').addClass('addColor');
-                    $('.subLevels').addClass('addColor');
-                } else if (operator === '-') {
-                    $('.page').addClass('subtractColor');
-                    $('.subLevels').addClass('subtractColor');
-                } else if (operator === '&times;') {
-                    $('.page').addClass('multiplyColor');
-                    $('.subLevels').addClass('multiplyColor');
-                } else if (operator === '&divide;') {
-                    $('.page').addClass('divideColor');
-                    $('.subLevels').addClass('divideColor');
-                }
+                // Set different colors for each operation
+                $('.page').addClass(opName + 'Color');
 
-                // Adjust colors in main menu
+                // Adjust colors in main menu if needed
                 if (!($(idName).hasClass(className))) {
 
-                    // Remove all colored borders
-                    $('#math_add').removeClass('addColor');
-                    $('#math_subtract').removeClass('subtractColor');
-                    $('#math_multiply').removeClass('multiplyColor');
-                    $('#math_divide').removeClass('divideColor');
-
+                    $('[id^="math_"]').removeClassRegex(/Color$/);
                     $(idName).addClass(className);
                 }
             }
@@ -186,7 +164,7 @@ FMF.model = (function() {
                 // Intially default to first level
                 $('#levelMenu li').removeClass('active');
                 $('#levelMenu li').first().addClass('active');
-            }        
+            }   
         },
         checkAns: function(topVal, bottomVal, answer, correctAns, isTimed) {
             var result = this.results[this.opName].level[this.levelIndex];
