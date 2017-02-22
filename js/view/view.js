@@ -198,8 +198,8 @@ FMF.view = (function() {
                 $("#scores_date").text(dateInfo);
                 $("#scores_numRange").html('Number range: ' +
                         'Level ' + (model.diff + 1) + ', ' +
-                        model.numRange[0] + ' through ' +
-                        model.numRange[model.numRange.length - 1]);
+                        model.nums[0] + ' through ' +
+                        model.nums[model.nums.length - 1]);
 
                 if (typeof(user) !== 'undefined') {
                     $('#test_user').empty().append(userMsg);
@@ -254,7 +254,7 @@ FMF.view = (function() {
             /*
              * Users can click on numeric buttons to answer problems.
              * For addition, subtraction & division the buttons default to 1 - 30
-             * or 0 - 29, depending on whether numRange[diff] starts with 0 or 1.
+             * or 0 - 29, depending on whether nums[diff] starts with 0 or 1.
              * This range covers all possible answers for the 3 operations, so
              * buttons are just set at the beginning of a new problem set.
              * But for MULTIPLICATION, a wider range of numbers is needed.  This
@@ -262,7 +262,7 @@ FMF.view = (function() {
              */
             function getStart(index) {
 
-                var lowestVal = model.numRange[0];
+                var lowestVal = model.nums[0];
                 var correctAns;
                 var start;
 

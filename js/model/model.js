@@ -4,7 +4,7 @@ FMF.model = (function() {
     'use strict';
 
     var template = FMF.template;
-    var levelsInfo = []; 
+    var levels = []; 
 
     /*
      * There are three DIFFICULTY levels: Level 1 uses 0-5,
@@ -12,7 +12,7 @@ FMF.model = (function() {
      * addition, subtraction, multiplication & division
      * problems.
      *
-     * 'levelsInfo' is an array of info for each level
+     * 'levels' is an array of info for each level
      * It includes the following properties:
      *      nums: an array of #s used for level 
      *      drills: array of arrays - used to generate various problem sets
@@ -21,11 +21,11 @@ FMF.model = (function() {
      *      labelsDiv: similar to labels, but excludes zero 
      */
     
-    levelsInfo[0] = getLevelsInfo(0, 5);
-    levelsInfo[1] = getLevelsInfo(1, 10);
-    levelsInfo[2] = getLevelsInfo(1, 12);
+    levels[0] = getLevels(0, 5);
+    levels[1] = getLevels(1, 10);
+    levels[2] = getLevels(1, 12);
     
-    function getLevelsInfo(start, end) {
+    function getLevels(start, end) {
         var nums = getNums(start, end);
         var drills = getDrills (start, end, nums);
         var labels = getLabels(start, end);
@@ -35,7 +35,7 @@ FMF.model = (function() {
                 drillsDiv: (start === 0) ? getDrills (1, end, getNums(1, end)) : drills, 
                 labels: labels, 
                 labelsDiv: (start === 0) ? getLabels(1, end) : labels
-               }
+               };
         
         function getNums(start, end) {
             return Array(end - start + 1).fill()
@@ -58,12 +58,12 @@ FMF.model = (function() {
     
     var publicAPI = {
         diff: -1,    //Set in controller.handleStartLevel
-        drillRange: [],    //Set in model.setProblemRanges
-        drillRangeDiv: [],    //Set in model.setProblemRanges
-        labelRange: [],    //Set in model.setProblemRanges
-        labelRangeDiv: [],    //Set in model.setProblemRanges
+        drills: [],    //Set in model.setProblemRanges
+        drillsDiv: [],    //Set in model.setProblemRanges
+        labels: [],    //Set in model.setProblemRanges
+        labelsDiv: [],    //Set in model.setProblemRanges
         levelIndex: 0,      // Set in controller.handleChangeLevel and in model.updateLevelMenu
-        numRange: [],    //Set in model.setProblemRanges
+        nums: [],    //Set in model.setProblemRanges
         operator: '',  // Set in controller.changeOperator
         opName: '',  // Set in controller.changeOperator
         perPage: 5,
@@ -94,7 +94,7 @@ FMF.model = (function() {
             this.opName = opName;
             
             // Set label array for +, - and x
-            lblArray = this.labelRange;
+            lblArray = this.labels;
 
             /*
              * Depending on operator, get symbol (for display) and
@@ -121,7 +121,7 @@ FMF.model = (function() {
                     symbol = '\xF7';
                 
                     // Use different label array for div (excludes 0)
-                    lblArray = this.labelRangeDiv;
+                    lblArray = this.labelsDiv;
                     break;
 
                 default:
@@ -161,7 +161,7 @@ FMF.model = (function() {
                 // Update list options in levelMenu
                 $('#levelMenu').html(subMenuHTML);
 
-                // Intially default to first level
+                // Default to first level
                 $('#levelMenu li').removeClass('active');
                 $('#levelMenu li').first().addClass('active');
             }   
@@ -179,18 +179,14 @@ FMF.model = (function() {
 
             /*
              * If answer is incorrect, set error flag to true and record 
-             * error. (For practice sessions only, also highlight errors)
+             * error. (also highlight errors if practice session)
              */
             if (answer !== correctAns) {
 
                 // Add error array to results
                 result.errors.push([topVal, bottomVal, answer, correctAns]);
 
-                /*
-                 * If not timed test, add 'error' class to highlight error
-                 * (don't distract users with highlight during
-                 * a timed test)
-                 */
+                // If practice, add 'error' class to highlight error
                 if(!isTimed) {
                     $('.live').addClass('error');
                 }
@@ -238,10 +234,12 @@ FMF.model = (function() {
             problemSet = problemSet.concat(problemSet);
             this.problemSet = problemSet;
         },
-        getAddOrMult: function(tempNums, drillArray) {
-            var basicProblemSet = [];
+        getAddOrMult: function(tempNums, drills) {
+            var basicProbs = [];
             var operator = this.operator;
-            var correctAns;
+            var answer;
+            var a;
+            var b;
 
             /*
              * Loops cycle through array values to create an array of
@@ -250,89 +248,88 @@ FMF.model = (function() {
              * Note that at this stage duplicate problems are excluded
              * (array will not contain BOTH 4 + 5 = 9 and 5 + 4 = 9).
              */
-            for (var j = (drillArray.length-1), m = 0; m <= j; j -= 1) {
+            for (var j = (drills.length-1), m = 0; m <= j; j -= 1) {
+                a = drills[j];
+                
                 for (var i = (tempNums.length-1), l = 0; l <= i; i -= 1) {
+                    b = tempNums[i];
+                    
+                    answer = (operator === '+') ? (
+                            a + b
+                        ) : (
+                            a * b
+                        );
 
-                    if (operator === '+') {
-                        correctAns = drillArray[j] + tempNums[i];
-                    } else if (operator === '&times;') {
-                        correctAns = drillArray[j] * tempNums[i];
-                    }
-
-                    /*
-                     * Randomize the order of the addends/factors for
-                     * display purposes
-                     * (example: if user chooses '+2' from menu,
-                     * vary whether '2' displays as
-                     * the first or second addend in the problems)
-                     */
-                    if (Math.floor(Math.random()*2)) {
-                        basicProblemSet.push([drillArray[j],
-                                tempNums[i], correctAns]);
-                    } else {
-                        basicProblemSet.push([tempNums[i],
-                                drillArray[j], correctAns]);
-                    }
+                    // Randomize the order of the addends/factors for display purposes
+                    (Math.floor(Math.random()*2)) ? (
+                        basicProbs.push([a, b, answer])
+                    ) : (
+                        basicProbs.push([b, a, answer])
+                    );                    
                 }
 
                 /*
-                 * If the value drillArray[j] is also in tempNums,
+                 * If the value drills[j] is also in tempNums,
                  * splice it out of tempNums
                  * to avoid creating duplicate problems
                  */
-                var lookForMatch = tempNums.indexOf(drillArray[j]);
+                var lookForMatch = tempNums.indexOf(a);
 
                 if (lookForMatch !== -1) {
                     tempNums.splice(lookForMatch, 1);
                 }
             }
 
-            return this.shuffleAndExpand(basicProblemSet);
+            return this.shuffleAndExpand(basicProbs);
         },
-        getDivision: function(tempNums, drillArray) {
-            var basicProblemSet = [];
+        getDivision: function(tempNums, drills) {
+            var basicProbs = [];
             var dividend;
+            var a;
+            var b;
 
             /*
              * Loops cycle through array values to create an array of
              * division problems.
              * Note that the 'tempNum' values are assigned to the RESULT
-             * (quotient) of the division problem, and the 'drillArray'
+             * (quotient) of the division problem, and the 'drills'
              * values are the divisors. The top number in the division
              * problem (the dividend) is the product of the 'tempNum' and
-             * 'drillArray' values. (example: if tempNum is 3 and
-             * drillArray is 2, then problem will be
+             * 'drills' values. (example: if tempNum is 3 and
+             * drills is 2, then problem will be
              * 6 divided by 2 = 3)
              */
-            for (var j = (drillArray.length-1), m = 0; m <= j; j -= 1) {
-                if (drillArray[j] === 0) continue;
+            for (var j = (drills.length-1), m = 0; m <= j; j -= 1) {
+                a = drills[j];
+                //if (drills[j] === 0) continue;
+                
                 for (var i = (tempNums.length-1), l = 0; l <= i; i -= 1) {
-                    dividend = drillArray[j] * tempNums[i];
-                    basicProblemSet.push([dividend, drillArray[j],
-                            tempNums[i]]);
+                    b = tempNums[i];
+                    dividend = a * b;
+                    basicProbs.push([dividend, a, b]);
                 }
             }
 
-            return this.shuffleAndExpand(basicProblemSet);
+            return this.shuffleAndExpand(basicProbs);
         },
         getProblemArray: function (newIndex) {
-            var drillArray = [];
+            var drills = [];
             var operator = this.operator;
 
             this.levelIndex = newIndex;
 
             // Use special array for division (excludes zero)
-            if (this.opName === 'divide') {
-                drillArray = this.drillRangeDiv[this.levelIndex];
-            } else {
-                drillArray = this.drillRange[this.levelIndex];
-            }
+            drills = (this.opName === 'divide') ? (
+                    this.drillsDiv[this.levelIndex]
+                ) : (
+                    this.drills[this.levelIndex]
+            );
 
             /*
-             * Make a COPY of the numRange array (because it gets
+             * Make a COPY of the nums array (because it gets
              * modified in fcn calls below)
              */
-            var tempNums = this.numRange.slice();
+            var tempNums = this.nums.slice();
 
             /*
              * Clear problemSet array before creating new array
@@ -341,49 +338,58 @@ FMF.model = (function() {
             this.problemSet.length = 0;
             this.problemIndex = 0;
 
-            if ((operator === '+') || (operator === '&times;')) {
-                this.problemSet = this.getAddOrMult(tempNums, drillArray);
-            } else if (operator === '-') {
-                this.problemSet = this.getSubtraction(tempNums, drillArray);
-            } else if (operator === '&divide;') {
-                this.problemSet = this.getDivision(tempNums, drillArray);
-            } else {
-                alert('The operator "' + operator + '" is not valid.');
-                return;
+            switch (operator) {
+                case '+':
+                case '&times;':
+                    this.problemSet = this.getAddOrMult(tempNums, drills);
+                    break;
+                case '-':
+                    this.problemSet = this.getSubtraction(tempNums, drills);
+                    break;
+                case '&divide;':
+                    this.problemSet = this.getDivision(tempNums, drills);
+                    break;
+                default:
+                    alert('The operator "' + operator + '" is not valid.');
             }
         },
-        getSubtraction: function(tempNums, drillArray) {
-            var basicProblemSet = [];
+        getSubtraction: function(tempNums, drills) {
+            var basicProbs = [];
             var minuend;
+            var a;
+            var b;
 
             /*
              * Loops cycle through array values to create an array of
              * subtraction problems.
              * Note that the 'tempNum' values are assigned to the RESULT
-             * of the subtraction problem, and the 'drillArray' values
+             * of the subtraction problem, and the 'drills' values
              * are what gets subtracted. The top number in the subtraction
              * problem (the minuend) is the SUM of the 'tempNum' and
-             * 'drillArray' values.
-             * (example: if tempNum is 3 and drillArray is 2, then
+             * 'drills' values.
+             * (example: if tempNum is 3 and drills is 2, then
              * problem will be 5 - 2 = 3)
              */
-            for (var j = (drillArray.length-1), m = 0; m <= j; j -= 1) {
+            for (var j = (drills.length-1), m = 0; m <= j; j -= 1) {
+                a = drills[j];
+                
                 for (var i = (tempNums.length-1), l = 0; l <= i; i -= 1) {
-                    minuend = drillArray[j] + tempNums[i];
-                    basicProblemSet.push([minuend, drillArray[j],
-                            tempNums[i]]);
+                    b = tempNums[i];
+                    minuend = a + b;
+                    basicProbs.push([minuend, a,
+                            b]);
                 }
             }
 
-            return this.shuffleAndExpand(basicProblemSet);
+            return this.shuffleAndExpand(basicProbs);
         },
-        shuffleAndExpand: function(basicProblemSet) {
-            var newProblems = [];
-            var reshuffledSet = [];
+        shuffleAndExpand: function(basicProbs) {
+            var probs = [];
+            var shuffle = [];
             var ctr;
 
             // Shuffle basic problem set, to mixup order for display
-            newProblems = _.shuffle(basicProblemSet);
+            probs = _.shuffle(basicProbs);
 
             /*
              * Goals for problem sets:
@@ -399,85 +405,80 @@ FMF.model = (function() {
              *      3) Prevent consecutive problems from being identical,
              *          which can happen if the first problem in the newly
              *          shuffled array matches the last problem in
-             *          newProblems array. (so before concat. a shuffled
-             *          array to newProblems, check if 1st element of
-             *          shuffled array matches last element of newProblems. 
+             *          probs array. (so before concat. a shuffled
+             *          array to probs, check if 1st element of
+             *          shuffled array matches last element of probs. 
              *          If it does,
              *          push & shift shuffled array before concat.)
              */
             for (var i = 1; i < 4 ; i +=1 ) {
-                ctr = newProblems.length;
-                reshuffledSet = _.shuffle(basicProblemSet);
+                ctr = probs.length;
+                shuffle = _.shuffle(basicProbs);
 
                 /*
                  * To prevent the same problem appearing 2x in a row,
-                 * check if last el of newProblems matches first
+                 * check if last el of probs matches first
                  * el of shuffled set.
                  * If it matches, uses push & shift before concat.
                  */
-                if ((newProblems[ctr-1][0] === reshuffledSet[0][0]) &&
-                        (newProblems[ctr-1][1] === reshuffledSet[0][1])) {
-                    reshuffledSet.push(reshuffledSet[0]);
-                    reshuffledSet.shift();
+                if ((probs[ctr-1][0] === shuffle[0][0]) &&
+                        (probs[ctr-1][1] === shuffle[0][1])) {
+                    shuffle.push(shuffle[0]);
+                    shuffle.shift();
                 }
 
-                newProblems = newProblems.concat(reshuffledSet);
+                probs = probs.concat(shuffle);
             }
 
             /*
-             * Now newProblems contains multiple sets of the basicProblemSet.
+             * Now probs contains 4 shuffled sets of the basicProbs.
              * Check if last element matches first. If yes,
-             * splice location of last element (-3). (If the user does
-             * more problems than the length of the newProblems array,
-             * the app will cycle through the array a second time -
-             * so matching first & last elements would make the same problem
-             * appear twice in a row.)
+             * splice location of last element (-3) so that no
+             * consecutive problems are identical
              */
-            ctr = newProblems.length;
-            if ((newProblems[ctr-1][0] === newProblems[0][0]) &&
-                    (newProblems[ctr-1][1] === newProblems[0][1])) {
-                newProblems.splice(-3,0,newProblems[ctr-1]);
-                newProblems.splice(-1,1);
+            ctr = probs.length;
+            if ((probs[ctr-1][0] === probs[0][0]) &&
+                    (probs[ctr-1][1] === probs[0][1])) {
+                probs.splice(-3,0,probs[ctr-1]);
+                probs.splice(-1,1);
             }
 
-            return newProblems;
+            return probs;
         },
         setName: function(userName) {
             if (typeof(userName) !== 'undefined' && userName !== '') {
                 this.user = userName;
             }
         },
-        setProblemRanges: function(difficulty) {
+        setProblemRanges: function(diff) {
             var results = this.results;
 
-            this.diff = difficulty;
+            this.diff = diff;
 
             /*
              * Get arrays used to generate problems
              * based on difficulty level user selected.
              */
-            this.numRange = levelsInfo[difficulty].nums;
-            this.drillRange = levelsInfo[difficulty].drills;
-            this.labelRange = levelsInfo[difficulty].labels;            
-            this.drillRangeDiv = levelsInfo[difficulty].drillsDiv;
-            this.labelRangeDiv = levelsInfo[difficulty].labelsDiv;            
+            this.nums = levels[diff].nums;
+            this.drills = levels[diff].drills;
+            this.labels = levels[diff].labels;            
+            this.drillsDiv = levels[diff].drillsDiv;
+            this.labelsDiv = levels[diff].labelsDiv;            
             
             // Define results object to track user's results
-            results.add = new Results('+', this.drillRange, this.labelRange);
-            results.subtract = new Results('-', this.drillRange,
-                               this.labelRange);
-            results.multiply = new Results('\xD7', this.drillRange,
-                               this.labelRange);
-            results.divide = new Results('\xF7', this.drillRangeDiv,
-                             this.labelRangeDiv);
+            results.add = new Results('+', this.drills, this.labels);
+            results.subtract = new Results('-', this.drills, this.labels);
+            results.multiply = new Results('\xD7', this.drills, this.labels);
+            results.divide = new Results('\xF7', this.drillsDiv, this.labelsDiv);
                         
-            function Results(op, drRange, lblRange) {
+            function Results(op, drills, labels) {
                 this.level = [];
-                for(var i = 0, l = drRange.length; i < l; i++) {        
-                    this.level[i] = {drillArray:[],label:'',
-                                    practice:[0,0],timed:[],errors:[]};
-                    this.level[i].drillArray = drRange[i];
-                    this.level[i].label =  op + lblRange[i];
+                for(var i = 0, l = drills.length; i < l; i++) {        
+                    this.level[i] = {drills: drills[i],
+                                     label: op + labels[i],
+                                     practice: [0,0],
+                                     timed: [],
+                                     errors: []};
                 }
             }
         }
