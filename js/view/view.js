@@ -164,6 +164,51 @@ FMF.view = (function() {
                 myThis.errorPause = false;
             }
         },
+        setOperator: function(oper) {
+
+            var symbol = (oper === 'add') ? ['+', '+'] 
+                        : ((oper === 'subtract') ? ['-', '-'] 
+                        : ((oper === 'multiply') ? ['\xD7', '&times;'] 
+                        : ['\xF7', '&divide;']));
+
+            $('.valop').text(symbol[0]);
+
+            setColors(); 
+            updateLevelMenu();
+
+            // Adjust colors to reflect selected operator
+            function setColors() {
+                var idName = '#math_' + oper;
+                var className = oper + 'Color';
+                
+                // Remove any of the color classes before resetting
+                $('[id^="answer"]').removeClass('error');
+                $('.page').removeClassRegex(/Color$/);
+                $('.subLevels').removeClass(/Color$/);
+
+                // Set different colors for each operation
+                $('.page').addClass(oper + 'Color');
+
+                // Adjust colors in main menu if needed
+                if (!($(idName).hasClass(className))) {
+
+                    $('[id^="math_"]').removeClassRegex(/Color$/);
+                    $(idName).addClass(className);
+                }
+            }
+
+            function updateLevelMenu() {
+                var lblArray = (oper === 'divide') ? model.labelsDiv : model.labels;
+                var subMenuHTML = template.getSubMenuHTML(lblArray, symbol[1]);
+
+                // Update list options in levelMenu
+                $('#levelMenu').html(subMenuHTML);
+
+                // Default to first level
+                $('#levelMenu li').removeClass('active');
+                $('#levelMenu li').first().addClass('active');
+            }   
+        },
         setFtrsHdrs: function () {
             var dateInfo = this.dateInfo;
             var user = model.user;
@@ -235,7 +280,7 @@ FMF.view = (function() {
              * the number range on the buttons includes answer for 
              * current problem.
              */
-            if ((model.opName === 'multiply') || (isFirst)) {
+            if ((model.oper === 'multiply') || (isFirst)) {
                 var start = getStart(problemIndex);
                 
                 // Adjust #s on buttons if start value needs to be changed

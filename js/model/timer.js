@@ -134,7 +134,7 @@ FMF.model = (function() {
             $('[id^="testInfo"]').empty();
         },
         startTimer: function() {
-            var result = model.results[model.opName].level[model.levelIndex];
+            var result = model.results[model.oper].level[model.levelIndex];
             var testCount = result.timed.length - 1;
             var timerText = (TIMER_MS < 60000) ?
                             Math.round(TIMER_MS/1000) + ' second' :
@@ -143,7 +143,7 @@ FMF.model = (function() {
             var operator = this.operator;
             var myThis = this;
             var data = {msg: msg, 
-                        opName: helpers.leadCap(model.opName),
+                        oper: helpers.leadCap(model.oper),
                         label: result.label};
 
             $('#testMsg').removeClass('hide');
@@ -169,19 +169,23 @@ FMF.model = (function() {
             }
 
             function endTimedTest() {
-                var opName = model.opName;
-                var result = model.results[opName].level[model.levelIndex];
+                var oper = model.oper;
+                var result = model.results[oper].level[model.levelIndex];
                 var testCount = result.timed.length - 1;
                 var correct = result.timed[testCount][0];
                 var attempted = result.timed[testCount][1];
                 var missed = attempted - correct;
                 var percent = Math.round((correct/attempted) * 100);
-                var text1 = helpers.leadCap(opName) + ': ' + result.label;
+                var text1 = helpers.leadCap(oper) + ': ' + result.label;
                 var htmlErrors = '';
                 var errorArray = [];
                 var tblHead = '';
                 var msg = '';
-
+                var operator = (oper === 'add') ? '+'
+                        : ((oper === 'subtract') ? '-' 
+                        : ((oper === 'multiply') ? '&times;' 
+                        : '&divide;'));
+                
                 /*
                  * If user had errors, use .slice to get an array of error
                  * info for mistakes made during the just completed timed

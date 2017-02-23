@@ -171,10 +171,11 @@ FMF.controller = (function() {
         },
         handleOpClick: function(newOp) {
 
-            // Reset 'operator' (only if changed from current setting)
-            if ((model.opName !== newOp)) {
+            // Reset 'oper' (only if changed from current setting)
+            if ((model.oper !== newOp)) {
                 model.changeOperator(newOp);
                 model.getProblemArray(0);
+                view.setOperator(model.oper);
                 view.displayNextSet(false);
                 view.setHighlight(true);
                 
@@ -202,6 +203,7 @@ FMF.controller = (function() {
             view.setFtrsHdrs();
             model.changeOperator('add');
             model.getProblemArray(0);
+            view.setOperator(model.oper);
             view.displayNextSet(false);
             view.setHighlight(true);
             view.showTopic('#topicMathFacts');

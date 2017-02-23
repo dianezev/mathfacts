@@ -64,8 +64,7 @@ FMF.model = (function() {
         labelsDiv: [],    //Set in model.setProblemRanges
         levelIndex: 0,      // Set in controller.handleChangeLevel and in model.updateLevelMenu
         nums: [],    //Set in model.setProblemRanges
-        operator: '',  // Set in controller.changeOperator
-        opName: '',  // Set in controller.changeOperator
+        oper: '',  // Set in controller.changeOperator
         perPage: 5,
         problemIndex: -1,
         problemSet: [],     // Set in model.getProblemArray
@@ -86,88 +85,13 @@ FMF.model = (function() {
             this.problemIndex = problemIndex + perPage - 
                                 (problemIndex % perPage);
         },
-        changeOperator: function(opName) {
-            var symbol = '';
-            var operator;
-            var lblArray = [];
+        changeOperator: function(oper) {
 
-            this.opName = opName;
+            this.oper = oper;
             
-            // Set label array for +, - and x
-            lblArray = this.labels;
-
-            /*
-             * Depending on operator, get symbol (for display) and
-             * operator (used in HTML)
-             */
-            switch (opName) {
-                case 'add':
-                    operator = '+';
-                    symbol = '+';
-                    break;
-
-                case 'subtract':
-                    operator = '-';
-                    symbol = '-';
-                    break;
-
-                case 'multiply':
-                    operator = '&times;';
-                    symbol = '\xD7';
-                    break;
-
-                case 'divide':
-                    operator = '&divide;';
-                    symbol = '\xF7';
-                
-                    // Use different label array for div (excludes 0)
-                    lblArray = this.labelsDiv;
-                    break;
-
-                default:
-                    alert('Error: "' + opName + '" is not a valid option.');
-                    return;
-            }
-            this.operator = operator;
-
-            $('.valop').text(symbol);
-            setColors();
-            updateLevelMenu();
-
-            // Adjust colors to reflect selected operator
-            function setColors() {
-                var idName = '#math_' + opName;
-                var className = opName + 'Color';
-                
-                // Remove any of the color classes before resetting
-                $('[id^="answer"]').removeClass('error');
-                $('.page').removeClassRegex(/Color$/);
-                $('.subLevels').removeClass(/Color$/);
-
-                // Set different colors for each operation
-                $('.page').addClass(opName + 'Color');
-
-                // Adjust colors in main menu if needed
-                if (!($(idName).hasClass(className))) {
-
-                    $('[id^="math_"]').removeClassRegex(/Color$/);
-                    $(idName).addClass(className);
-                }
-            }
-
-            function updateLevelMenu() {
-                var subMenuHTML = template.getSubMenuHTML(lblArray, operator);
-
-                // Update list options in levelMenu
-                $('#levelMenu').html(subMenuHTML);
-
-                // Default to first level
-                $('#levelMenu li').removeClass('active');
-                $('#levelMenu li').first().addClass('active');
-            }   
         },
         checkAns: function(topVal, bottomVal, answer, correctAns, isTimed) {
-            var result = this.results[this.opName].level[this.levelIndex];
+            var result = this.results[this.oper].level[this.levelIndex];
             var testCount;
 
             if (isTimed) {
@@ -236,7 +160,7 @@ FMF.model = (function() {
         },
         getAddOrMult: function(tempNums, drills) {
             var basicProbs = [];
-            var operator = this.operator;
+            var oper = this.oper;
             var answer;
             var a;
             var b;
@@ -244,7 +168,7 @@ FMF.model = (function() {
             /*
              * Loops cycle through array values to create an array of
              * addition or multiplication problems (depending on 
-             * value of 'operator').
+             * value of 'oper').
              * Note that at this stage duplicate problems are excluded
              * (array will not contain BOTH 4 + 5 = 9 and 5 + 4 = 9).
              */
@@ -254,7 +178,7 @@ FMF.model = (function() {
                 for (var i = (tempNums.length-1), l = 0; l <= i; i -= 1) {
                     b = tempNums[i];
                     
-                    answer = (operator === '+') ? (
+                    answer = (oper === 'add') ? (
                             a + b
                         ) : (
                             a * b
@@ -301,7 +225,6 @@ FMF.model = (function() {
              */
             for (var j = (drills.length-1), m = 0; m <= j; j -= 1) {
                 a = drills[j];
-                //if (drills[j] === 0) continue;
                 
                 for (var i = (tempNums.length-1), l = 0; l <= i; i -= 1) {
                     b = tempNums[i];
@@ -314,12 +237,12 @@ FMF.model = (function() {
         },
         getProblemArray: function (newIndex) {
             var drills = [];
-            var operator = this.operator;
+            var oper = this.oper;
 
             this.levelIndex = newIndex;
 
             // Use special array for division (excludes zero)
-            drills = (this.opName === 'divide') ? (
+            drills = (oper === 'divide') ? (
                     this.drillsDiv[this.levelIndex]
                 ) : (
                     this.drills[this.levelIndex]
@@ -338,19 +261,19 @@ FMF.model = (function() {
             this.problemSet.length = 0;
             this.problemIndex = 0;
 
-            switch (operator) {
-                case '+':
-                case '&times;':
+            switch (oper) {
+                case 'add':
+                case 'multiply':
                     this.problemSet = this.getAddOrMult(tempNums, drills);
                     break;
-                case '-':
+                case 'subtract':
                     this.problemSet = this.getSubtraction(tempNums, drills);
                     break;
-                case '&divide;':
+                case 'divide':
                     this.problemSet = this.getDivision(tempNums, drills);
                     break;
                 default:
-                    alert('The operator "' + operator + '" is not valid.');
+                    alert('The operator name "' + oper + '" is not valid.');
             }
         },
         getSubtraction: function(tempNums, drills) {

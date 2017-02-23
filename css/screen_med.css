@@ -52,7 +52,7 @@ Medium Screen Size Layout
     display: inline;
 }
 .backdrop {
-    min-height: 650px;
+    min-height: 500px;
 }
 nav.subLevels {
     width: 100%;

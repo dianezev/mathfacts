@@ -15,7 +15,7 @@ FMF.template = (function() {
                                         '<%= msg %>' +
                                   '</p>' +
                                   '<p>' +
-                                        '<%= opName %>: <%= label %>' +
+                                        '<%= oper %>: <%= label %>' +
                                   '</p>');
     
     // Used to set HTML for the problem set (not including values or answer region)
@@ -170,7 +170,7 @@ FMF.template = (function() {
 
             /*
              * Loops through practice & timed results for all levels
-             * for a given operator 'opName'
+             * for a given operator 'oper'
              * and appends the results to the 'id' selector
              */
                 var correct = 0;
