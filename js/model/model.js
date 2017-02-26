@@ -72,19 +72,6 @@ FMF.model = (function() {
         tScore: 0,      //Incremented with each correct answer
         user: '',
 
-        bumpUp: function() {
-            var problemIndex = this.problemIndex;
-            var perPage = this.perPage;
-
-            /*
-             * Adjust problem index so that fresh set of problems
-             * displays EVEN IF user hasn't reached end of current set
-             * (This is to avoid starting a timed test midway through a set &
-             * also to clear out a test set when timer stops.)
-             */
-            this.problemIndex = problemIndex + perPage - 
-                                (problemIndex % perPage);
-        },
         changeOperator: function(oper) {
 
             this.oper = oper;
@@ -110,10 +97,10 @@ FMF.model = (function() {
                 // Add error array to results
                 result.errors.push([topVal, bottomVal, answer, correctAns]);
 
-                // If practice, add 'error' class to highlight error
-                if(!isTimed) {
-                    $('.live').addClass('error');
-                }
+//                // If practice, add 'error' class to highlight error
+//                if(!isTimed) {
+//                    $('.live').addClass('error');
+//                }
 
             /*
              * Otherwise, if answer is correct, increment # of CORRECT
@@ -129,16 +116,16 @@ FMF.model = (function() {
                     result.timed[testCount][0] ++;
                 } else {
                     result.practice[0] ++;
-                    $("#trackScore").html("+" + this.tScore);
+//                    $("#trackScore").html("+" + this.tScore);
                 }
 
                 /*
                  * If not timed test, display check mark to
                  * indicate correct answer (& fade out)
                  */
-                if(!isTimed) {
-                    $('.live + i').addClass('fadeInOutOnce');
-                }
+//                if(!isTimed) {
+//                    $('.live + i').addClass('fadeInOutOnce');
+//                }
             }
 
             /*
@@ -150,13 +137,6 @@ FMF.model = (function() {
             } else {
                 result.practice[1] ++;
             }
-        },
-        doubleArray: function() {
-            var problemSet = this.problemSet;
-
-            // Double size of problem set with concat
-            problemSet = problemSet.concat(problemSet);
-            this.problemSet = problemSet;
         },
         getAddOrMult: function(tempNums, drills) {
             var basicProbs = [];
@@ -234,6 +214,42 @@ FMF.model = (function() {
             }
 
             return this.shuffleAndExpand(basicProbs);
+        },
+        getMore: function (isEnd) {
+            var length = this.problemSet.length;
+            var perPage = this.perPage;
+            var problemIndex = this.problemIndex;
+            var problemSet = this.problemSet;
+
+             // If at last problem on screen, force display of new set of problems
+            if (isEnd) {
+                this.problemIndex = bumpUp();
+            }
+
+            /*
+             * If there aren't enough problems left in the problemSet
+             * to display next set, double the array with concat
+             */
+            if ((this.problemIndex + perPage) > length) {
+                this.problemSet = doubleArray();
+            }            
+        
+            function bumpUp() {
+                
+                /*
+                 * Adjust problem index so that fresh set of problems
+                 * displays EVEN IF user hasn't reached end of current set
+                 * (so you get fresh display of problems when timed test starts...)
+                 */
+                return problemIndex + perPage - 
+                                    (problemIndex % perPage);
+            }
+
+            function doubleArray() {
+
+                // Double size of problem set with concat
+                return problemSet.concat(problemSet);
+            }
         },
         getProblemArray: function (newIndex) {
             var drills = [];

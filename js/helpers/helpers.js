@@ -62,11 +62,11 @@ FMF.helpers = (function() {
         },
         
         // Restrict data-entry to numbers (adapted from stackoverflow)
-        validateNumber: function(key) {
+        validateNumber: function(key, isShifted) {
 
             // Return true if user types number or left arrow or backspace key
             if ((key === 8 || key === 37) ||
-                (key >= 48 && key <= 57) ||
+                (key >= 48 && key <= 57 && !isShifted) ||
                 (key >= 96 && key <= 105)) {
                 return true;
 

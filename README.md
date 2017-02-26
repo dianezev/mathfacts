@@ -11,7 +11,6 @@ By Diane Zevenbergen, dianezev@comcast.net
 >To make a correction or improvement to this project, just fork the repository to your account, make the change you'd like and submit a pull request. I'm new to Javascript and welcome suggestions on improving organization, readability and efficiency as well as content improvement.
 
 ####Still To Be Done####
-> * Prevent pop-up of soft keyboard on tablets/phones.
 > * Add code to make responsive for various devices & screen sizes, especially tablets.
 > * Address browser differences (currently works best in Chrome).
 > * Add server-side functionality to track student progress over time.

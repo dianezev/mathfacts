@@ -22,7 +22,8 @@ FMF.controller = (function() {
             var isTimed = model.isTimed;
             var liveAnswer = '#answer' + view.liveIndex;
             var answer;
-            
+            var isCorrect;
+
             /*
              * The answer region is set up in one of two ways
              * depending on screen width (see MIN_PX_FOR_KEYBOARD in view):
@@ -32,7 +33,7 @@ FMF.controller = (function() {
              * 2) With <p> tags so that users CANNOT use keyboard -
              * they can only use onscreen numeric buttons to enter answers
              * 
-             * (This is a workaround to prevent virual keyboard popup
+             * (This is a workaround to prevent virtual keyboard popup
              * on med & smaller screens)
              */
             
@@ -60,9 +61,11 @@ FMF.controller = (function() {
                 $(liveAnswer).focus();
                 return;
             } else {
+                isCorrect = (correctAns === answer);
                 model.checkAns(topVal, bottomVal, answer,
                         correctAns, isTimed);
-                view.nextProblem(answer, correctAns, isTimed);
+                view.notify(isCorrect, isTimed);
+                view.nextProblem(isCorrect, isTimed);
             }
         },
         handleBodyClick: function() {
@@ -85,7 +88,7 @@ FMF.controller = (function() {
                 $('#levelMenu li').removeClass('active');
                 $(level).addClass('active');
                 model.getProblemArray(levelIndex);
-                view.displayNextSet(false);
+                view.displayNextSet();
                 view.setHighlight(false);
             }
             
@@ -129,7 +132,8 @@ FMF.controller = (function() {
 
                 // Cancel timer & proceed to user's selection
                 model.cancelTimer();
-                view.displayNextSet(true);
+                model.getMore(true);
+                view.displayNextSet();
                 view.setHighlight(false);
                 view.setTracker(true);
                 view.highlightSidebar(lastOption);
@@ -176,7 +180,7 @@ FMF.controller = (function() {
                 model.changeOperator(newOp);
                 model.getProblemArray(0);
                 view.setOperator(model.oper);
-                view.displayNextSet(false);
+                view.displayNextSet();
                 view.setHighlight(true);
                 
             // Prevent re-display of checkmarks if returning to practice
@@ -204,7 +208,7 @@ FMF.controller = (function() {
             model.changeOperator('add');
             model.getProblemArray(0);
             view.setOperator(model.oper);
-            view.displayNextSet(false);
+            view.displayNextSet();
             view.setHighlight(true);
             view.showTopic('#topicMathFacts');
             view.setTopMargin();
@@ -212,7 +216,8 @@ FMF.controller = (function() {
         handleTestResults: function() {
             
             // Display next set of practice problems
-            view.displayNextSet(true);
+            model.getMore(true);
+            view.displayNextSet();
             view.setHighlight(false);
             view.setTracker(true);
 

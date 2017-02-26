@@ -40,31 +40,14 @@ FMF.view = (function() {
                 $('.answer_region i').removeClass('fadeInOutOnce');
             }
         },
-        displayNextSet: function(bumpUp) {
-            var length = model.problemSet.length;
+        displayNextSet: function() {
             var problemIndex;
             var problemSet;
             var j;
-            
-            /*
-             * If 'bumpUp' is true, adjust problem index to
-             * force display of new set of problems
-             */
-            if (bumpUp) {
-                model.bumpUp();
-            }
-
-            /*
-             * If there aren't enough problems left in the problemSet
-             * to display next set, double the array with concat
-             */
-            if ((model.problemIndex + perPage) > length) {
-                model.doubleArray();
-            }            
 
             problemIndex = model.problemIndex;
             problemSet = model.problemSet;
-            
+
             // Remove error class before displaying new problems
             if ($('[id^="answer"]').hasClass('error')) {
                 $('[id^="answer"]').removeClass('error');
@@ -81,6 +64,7 @@ FMF.view = (function() {
 
             // Display new problems
             for (var i = 1, l = perPage; i <= l ; i +=1) {
+                
                 j = problemIndex + i - 1;
                 $('#topVal' + i).text(problemSet[j][0]);
                 $('#bottomVal' + i).text(problemSet[j][1]);
@@ -113,17 +97,17 @@ FMF.view = (function() {
                 $('#userName').focus();
             }
         },
-        nextProblem: function (answer, correctAns, isTimed) {
+        nextProblem: function (isCorrect, isTimed) {
             var liveIndex = this.liveIndex;
             var myThis = this;
-            
+
             /*
              * If LAST problem on screen is incorrect & session is PRACTICE,
              * delay the display of the next problem set
              * so that user can see error briefly
              */
             if ((liveIndex === perPage) &&
-                    (answer !== correctAns) &&
+                    (!isCorrect) &&
                     (!isTimed)) {
 
                 // Set flag to true (use to ignore keydown during pause)
@@ -157,11 +141,26 @@ FMF.view = (function() {
 
                 // If on last displayed problem, display the next problem set
                 if (liveIndex === perPage) {
-                    myThis.displayNextSet(false);
+                    model.getMore(false);
+                    myThis.displayNextSet();
                 }
 
                 myThis.setHighlight(false);
                 myThis.errorPause = false;
+            }
+        },
+        notify: function(isCorrect, isTimed) {
+            if (!isTimed) {
+            
+                // If answer is correct, update score & show check mark briefly
+                if (isCorrect) {
+                    $("#trackScore").html("+" + model.tScore);
+                    $('.live + i').addClass('fadeInOutOnce');
+                    
+                // otherwise set error flag to true
+                } else {
+                    $('.live').addClass('error');
+                }
             }
         },
         setOperator: function(oper) {
@@ -451,7 +450,8 @@ FMF.view = (function() {
                         $('#cover').removeClass('coverAll');
                         
                         // Display next set of problems & start timer
-                        myThis.displayNextSet(true);
+                        model.getMore(true);
+                        myThis.displayNextSet();
                         myThis.showTopic('#topicMathFacts');
                         myThis.setHighlight(true);
                         window.clearInterval(countdownTimer);

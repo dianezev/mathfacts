@@ -78,8 +78,6 @@ $('#allButtons').on({
  * If user presses enter, tab or right arrow, handleAnswer.
  * Otherwise, verify that user's entry is numeric.
  * TBD: overriding default use of tab might be a no-no
- * Also not sure if I'm supposed to call a function here &
- * keep this short, but I don't want to pass event (for prevDef)
  */
 $('#solutions').on('keydown', 'input', function(e) {
     var key = e.which;
@@ -91,42 +89,23 @@ $('#solutions').on('keydown', 'input', function(e) {
     }
 
     // For Enter, Tab or Right Arrow, check answer
-    if (key === 13 || key === 9 || key === 39) {
+    if ((key === 13 || key === 9 || key === 39) && (!FMF.view.errorPause)) {
         FMF.controller.handleAnswer();
 
     // Otherwise check that user entry is numeric
-    } else if (!FMF.helpers.validateNumber(key)) {
+    } else if (!FMF.helpers.validateNumber(key, e.shiftKey)) {
         e.preventDefault();
     }    
 });
 
+
 $('body').on('keydown', function(e) {
-
-    /*
-     * Ignore keydown if a pause is in effect to
-     * highlight error on last displayed problem
-     */
-    if (FMF.view.errorPause) { return; }
     
-    // If math problems are visible, restrict keys
-    if (!($('#chalkboard').hasClass('hide')) &&
-            !($('#topicMathFacts').hasClass('hide'))) {
-        var key = e.which;
-
-        // Prevent default for Tab
-        // DEPRECATED KEYCODE:   if (e.keyCode === 9 || e.which === 9) {
-        if (key === 9) {
-            e.preventDefault();
-        }
-
-        // For Enter, Tab or Right Arrow, check answer
-        if (key === 13 || key === 9 || key === 39) {
-            FMF.controller.handleAnswer();
-
-        // Otherwise check that user entry is numeric
-        } else if (!FMF.helpers.validateNumber(key)) {
-            e.preventDefault();
-        }
+    // Prevent keys from doing anything during error highlight
+    if (FMF.view.errorPause) { 
+        e.preventDefault(); 
     }
+    
 });
+
 //})();
