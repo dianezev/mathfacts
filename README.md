@@ -1,4 +1,4 @@
-##About Math Facts ([fastermathfacts.org](http://www.fastermathfacts.org))##
+About Math Facts ([fastermathfacts.org](http://www.fastermathfacts.org))
 By Diane Zevenbergen, dianezev@comcast.net
 
 ####Goals####
